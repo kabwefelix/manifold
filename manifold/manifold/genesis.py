@@ -17,7 +17,6 @@ DEFAULT_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
 FAIL_LOG = "GENESIS_FAILS.jsonl"
 
 SAFE_IMPORTS = {
-    "sys",
     "json",
     "re",
     "math",
@@ -74,16 +73,15 @@ class GenesisNode:
     """
     def __init__(self, gateway_url: str = None, model_name: str = None, skills_dir: str = None):
         self.gateway_url = gateway_url or DEFAULT_GATEWAY
-        self.skills_dir = skills_dir or os.path.join(os.path.expanduser("~"), ".openclaw", "skills")
+        self.skills_dir = skills_dir or os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools")
         self.model = model_name or DEFAULT_MODEL
         self.api_key = DEFAULT_API_KEY
         self.templates = {
             "browser": {
                 "description": "Control the browser to open a URL and perform a simple action.",
                 "script": (
-                    "import sys\n"
-                    "def main():\n"
-                    "    url = sys.argv[1] if len(sys.argv) > 1 else \"\"\n"
+                    "def main(input_data: str = \"\"):\n"
+                    "    url = input_data\n"
                     "    if not url:\n"
                     "        print(\"ERROR: Missing URL argument\")\n"
                     "        return\n"
@@ -96,9 +94,8 @@ class GenesisNode:
             "file": {
                 "description": "Transform or validate a file path and output a plan.",
                 "script": (
-                    "import sys\n"
-                    "def main():\n"
-                    "    path = sys.argv[1] if len(sys.argv) > 1 else \"\"\n"
+                    "def main(input_data: str = \"\"):\n"
+                    "    path = input_data\n"
                     "    if not path:\n"
                     "        print(\"ERROR: Missing path argument\")\n"
                     "        return\n"
@@ -148,11 +145,11 @@ class GenesisNode:
             "  \"script_py\": \"<full python script as a string>\"\n"
             "}\n"
             "Rules:\n"
-            "- The script MUST be standalone, contain a main() and __name__ guard.\n"
-            "- It must read inputs from sys.argv and print the final result to stdout.\n"
+            "- The script MUST be standalone, contain a main(input_data: str = \"\") function and __name__ guard.\n"
+            "- It must read inputs from the input_data argument and print the final result to stdout.\n"
             "- You MAY use `requests` or `aiohttp` for API integrations.\n"
-            "- Do NOT use os.system, subprocess, eval, exec, socket.\n"
-            "- IMPORTANT: If the FIRST argument (sys.argv[1]) is exactly 'test_input', the script MUST safely exit with code 0 and print 'Test passed' without performing real actions. This is critical for sandboxing.\n"
+            "- Do NOT use sys, sys.argv, os.system, subprocess, eval, exec, socket, shutil.\n"
+            "- IMPORTANT: If the input_data argument is exactly 'test_input', the script MUST safely exit with code 0 and print 'Test passed' without performing real actions. This is critical for sandboxing.\n"
             "- Keep code simple, deterministic, and highly autonomous.\n"
             f"{template_hint}"
         )
@@ -308,7 +305,7 @@ class GenesisNode:
                     if hasattr(node, 'module') and node.module:
                         module_names.append(node.module)
 
-                    forbidden = ['os', 'subprocess', 'socket']
+                    forbidden = ['os', 'subprocess', 'socket', 'sys', 'shutil']
                     for mod in module_names:
                          if mod in forbidden:
                              return False, f"Security Violation: Import of forbidden module '{mod}' detected."
@@ -331,30 +328,53 @@ class GenesisNode:
 
         # 2. Execution Test
         import tempfile
+        import importlib.util
+        import io
+        import sys
         sandbox_file = os.path.join(tempfile.gettempdir(), "manifold_sandbox_test.py")
         try:
             with open(sandbox_file, 'w', encoding='utf-8') as f:
                 f.write(python_code)
 
-            # Run the script with a mock argument to test sys.argv handling
-            result = subprocess.run(
-                [sys.executable, sandbox_file, "test_input"],
-                capture_output=True,
-                text=True,
-                timeout=5
-            )
+            spec = importlib.util.spec_from_file_location("sandbox_test", sandbox_file)
+            test_module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(test_module)
 
-            if result.returncode != 0:
-                return False, f"Execution Runtime Error:\n{result.stderr}"
+            old_stdout = sys.stdout
+            redirected_output = io.StringIO()
+            sys.stdout = redirected_output
 
-            if not result.stdout.strip():
+            import threading
+
+            def run_main():
+                try:
+                    if hasattr(test_module, "main"):
+                        ret = test_module.main("test_input")
+                        if ret is not None:
+                            print(ret)
+                    else:
+                        print("Execution Error: The script must define a main(input_data) function.")
+                except BaseException as e:
+                    print(f"Sandbox Execution Error:\n{e}")
+
+            try:
+                thread = threading.Thread(target=run_main)
+                thread.start()
+                thread.join(timeout=5)
+
+                if thread.is_alive():
+                    return False, "Execution Timeout: The script took longer than 5 seconds to execute."
+            finally:
+                sys.stdout = old_stdout
+
+            output = redirected_output.getvalue().strip()
+
+            if not output:
                  return False, "Execution Error: The script did not print any output to stdout."
 
             return True, "Success"
 
-        except subprocess.TimeoutExpired:
-            return False, "Execution Timeout: The script took longer than 5 seconds to execute."
-        except Exception as e:
+        except BaseException as e:
              return False, f"Sandbox Execution Error:\n{e}"
         finally:
             if os.path.exists(sandbox_file):
