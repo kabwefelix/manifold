@@ -358,14 +358,36 @@
             padding: 12px 0;
         }
         .chat-bubble {
-            max-width: 80%;
-            padding: 12px 16px;
-            border-radius: 12px;
+            max-width: 85%;
+            padding: 16px 20px;
+            border-radius: 16px;
             font-size: 14px;
             line-height: 1.6;
             word-wrap: break-word;
             animation: fadeSlideIn 0.2s ease-out;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
+        .chat-bubble pre {
+            background: var(--bg-base);
+            padding: 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 8px 0;
+            border: 1px solid var(--border);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+        .chat-bubble code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(255,255,255,0.1);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .chat-bubble p { margin-bottom: 8px; }
+        .chat-bubble p:last-child { margin-bottom: 0; }
+        .chat-bubble ul, .chat-bubble ol { margin-left: 20px; margin-bottom: 8px; }
+
         .chat-bubble.user {
             align-self: flex-end;
             background: var(--accent-blue);
@@ -394,26 +416,33 @@
         }
         .chat-input {
             flex: 1;
-            padding: 10px 14px;
-            border-radius: 8px;
+            padding: 14px 18px;
+            border-radius: 12px;
             border: 1px solid var(--border);
-            background: var(--bg-input);
+            background: var(--bg-surface);
             color: var(--text-primary);
             font-size: 14px;
             font-family: 'Inter', sans-serif;
             outline: none;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            transition: border-color 0.2s;
         }
         .chat-input:focus { border-color: var(--accent-blue); }
         .chat-send {
-            padding: 10px 20px;
-            border-radius: 8px;
+            padding: 14px 24px;
+            border-radius: 12px;
             border: none;
-            background: var(--accent-blue);
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
             color: #fff;
-            font-weight: 600;
-            font-size: 13px;
+            font-weight: 700;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.2s;
+            box-shadow: 0 4px 12px var(--glow-blue);
+        }
+        .chat-send:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px var(--glow-blue);
         }
         .chat-send:hover { background: #79b8ff; }
         .chat-send:disabled { background: var(--text-muted); cursor: not-allowed; }
@@ -520,6 +549,7 @@
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
 
@@ -586,7 +616,7 @@
             <div class="chat-wrap">
                 <div class="chat-messages" id="chat-messages"></div>
                 <div class="chat-input-bar">
-                    <input type="text" class="chat-input" id="chat-input" placeholder="Ask Manifold anything...">
+                    <input type="text" class="chat-input" id="chat-input" placeholder="Initiate cognitive inquiry...">
                     <button class="chat-send" id="chat-send" onclick="sendChat()">Send</button>
                 </div>
             </div>
@@ -949,9 +979,23 @@ function addChatBubble(role, content) {
     const container = document.getElementById('chat-messages');
     const bubble = document.createElement('div');
     bubble.className = 'chat-bubble ' + role;
-    bubble.innerHTML = `<div class="label">${role === 'user' ? 'You' : 'Manifold'}</div><div>${escapeHtml(content).replace(/\n/g, '<br>')}</div>`;
+
+    let displayContent = content;
+    if (role === 'assistant' && typeof marked !== 'undefined') {
+        // Parse markdown for assistant responses
+        displayContent = marked.parse(content);
+    } else {
+        // Escape user input and basic format
+        displayContent = escapeHtml(content).replace(/\n/g, '<br>');
+    }
+
+    bubble.innerHTML = `<div class="label">${role === 'user' ? 'You' : 'Manifold'}</div><div class="msg-content">${displayContent}</div>`;
     container.appendChild(bubble);
-    container.scrollTop = container.scrollHeight;
+
+    // Auto scroll with slight delay for images/rendering
+    setTimeout(() => {
+        container.scrollTop = container.scrollHeight;
+    }, 50);
     return bubble;
 }
 
@@ -997,7 +1041,12 @@ async function sendChat() {
 }
 
 document.getElementById('chat-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        if(!document.getElementById('chat-send').disabled) {
+            sendChat();
+        }
+    }
 });
 
 // ── Load initial activity ────────────────
