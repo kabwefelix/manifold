@@ -1,4 +1,5 @@
 import json
+from manifold.paths import get_path
 from typing import Dict, Any, Tuple
 
 class Hyperparameters:
@@ -45,13 +46,13 @@ class Hyperparameters:
             domain (str): The identified domain of the task.
 
         Returns:
-            str: The dynamically generated system prompt for the OpenClaw engine.
+            str: The dynamically generated system prompt for the Manifold engine.
         """
         prompt = f"You are operating within the '{domain}' domain.\n"
 
         weights = {}
         try:
-            with open("cognitive_weights.json", "r", encoding="utf-8") as f:
+            with open(get_path("cognitive_weights.json"), "r", encoding="utf-8") as f:
                 data = json.load(f)
                 weights = data.get("system_prompts", {}).get("hyperparameters", {})
         except Exception as e:

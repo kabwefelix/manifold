@@ -41,9 +41,56 @@ ACTIVE_MODEL = {"model": CHAT_MODEL}
 HIPPOCAMPUS = None
 SUBCONSCIOUS = None
 
+
+def validate_startup():
+    import json
+    import os
+    from manifold.paths import get_path
+
+    # META.json
+    meta = get_path("META.json")
+    if not os.path.exists(meta):
+        with open(meta, "w", encoding="utf-8") as f:
+            json.dump({"domains": {}, "api_error_count": 0}, f, indent=2)
+
+    # VERSION.txt
+    version = get_path("VERSION.txt")
+    if not os.path.exists(version):
+        with open(version, "w", encoding="utf-8") as f:
+            f.write("V1.0")
+
+    # ACTIVE_MODEL.json
+    model = get_path("ACTIVE_MODEL.json")
+    if not os.path.exists(model):
+        with open(model, "w", encoding="utf-8") as f:
+            json.dump({"model": "deepseek-chat"}, f, indent=2)
+
+    # MEMORY_LEDGER.json
+    ledger = get_path("MEMORY_LEDGER.json")
+    if not os.path.exists(ledger):
+        with open(ledger, "w", encoding="utf-8") as f:
+            json.dump({"semantic_nodes": []}, f, indent=2)
+
+    # cognitive_weights.json
+    weights = get_path("cognitive_weights.json")
+    if not os.path.exists(weights):
+        with open(weights, "w", encoding="utf-8") as f:
+            json.dump({
+                "system_prompts": {
+                    "vector_observer": "You are the Manifold Vector Observer. Your job is to classify the user's prompt into three variables:\n1. 'domain': A string categorizing the task (e.g., 'math', 'web', 'system', 'general'). If the prompt asks about your internal state, self-awareness, or introspection, strictly classify the domain as 'introspection', 'internal_state', or 'self_awareness'.\n2. 'rigidity': A float between 0.0 and 1.0 indicating how strictly logical (1.0) or creatively associative (0.0) the response should be.\n3. 'complexity': An integer between 1 and 5 indicating the depth/parallelism required (1 = simple, 5 = highly complex synthesis).\n\nRespond ONLY with a valid, raw JSON object: {'domain': '...', 'rigidity': 0.5, 'complexity': 1}. Do not include markdown blocks, backticks, or any other text. Only the JSON object.",
+                    "hyperparameters": {
+                        "high_rigidity": "Maintain extreme rigidity. Your reasoning must be highly logical, factual, and concise. Do not use creative license or associative logic. Stick strictly to verified procedures.",
+                        "medium_rigidity": "Maintain a balanced approach. Be objective and factual, but allow for contextual interpretation and reasonable inferences to solve the problem.",
+                        "low_rigidity": "Engage in highly associative abstraction. Think creatively, explore tangential concepts, and synthesize novel ideas. Logic is fluid; prioritize insight and lateral thinking."
+                    }
+                }
+            }, f, indent=2)
+
 @asynccontextmanager
 async def lifespan(app):
     # ── Startup ──
+    validate_startup()
+
     global HIPPOCAMPUS, SUBCONSCIOUS
     if HIPPOCAMPUS is None:
         gateway_url = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
@@ -70,6 +117,7 @@ app.add_middleware(
 
 # ── Configuration Management ──────────────────────────────────────────────────
 import shutil
+from manifold.paths import get_path
 
 class ConfigManager:
     @staticmethod
@@ -91,8 +139,8 @@ class ConfigManager:
 import sqlite3
 
 class LogManager:
-    def __init__(self, db_path="manifold_activity.sqlite"):
-        self.db_path = db_path
+    def __init__(self, db_path=None):
+        self.db_path = db_path or get_path("manifold_activity.sqlite")
         self._init_db()
 
     def _init_db(self):
@@ -528,14 +576,14 @@ def set_model(request: dict):
         AVAILALE_MODELS.append(new_model)
 
     # Persist the change safely
-    ConfigManager.safe_save("ACTIVE_MODEL.json", ACTIVE_MODEL)
+    ConfigManager.safe_save(get_path("ACTIVE_MODEL.json"), ACTIVE_MODEL)
 
     log_activity("info", "system", f"Model changed to {new_model}")
     return {"model": ACTIVE_MODEL["model"]}
 
 @app.post("/log")
 async def post_log(request: dict):
-    """Allow external components (like OpenClaw gateway) to push activity to the manifold monitor."""
+    """Allow external components (like Manifold gateway) to push activity to the manifold monitor."""
     event_type = request.get("type", "info")
     component = request.get("component", "gateway")
     message = request.get("message", "")

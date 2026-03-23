@@ -2,12 +2,13 @@ import asyncio
 import aiofiles
 import json
 import os
+from manifold.paths import get_path
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-SELF_DEV_EVENTS_FILE = "SELF_DEV_EVENTS.jsonl"
-SELF_DEV_ACTIONS_FILE = "SELF_DEV_ACTIONS.jsonl"
-SELF_DEV_HISTORY_FILE = "SELF_DEV_HISTORY.jsonl"
+SELF_DEV_EVENTS_FILE = get_path("SELF_DEV_EVENTS.jsonl")
+SELF_DEV_ACTIONS_FILE = get_path("SELF_DEV_ACTIONS.jsonl")
+SELF_DEV_HISTORY_FILE = get_path("SELF_DEV_HISTORY.jsonl")
 SELF_DEV_LOCK = asyncio.Lock()
 
 DEFAULT_MODEL = os.environ.get("MANIFOLD_MODEL", "deepseek-reasoner")
@@ -105,10 +106,10 @@ class SelfDevelopmentEngine:
         if not events:
             return
 
-        meta_excerpt = _read_excerpt("META.json", 1200)
-        weights_excerpt = _read_excerpt("cognitive_weights.json", 1200)
-        insights_excerpt = _read_excerpt("INSIGHTS.md", 1200)
-        memory_excerpt = _read_excerpt("MEMORY_LEDGER.json", 1200)
+        meta_excerpt = _read_excerpt(get_path("META.json"), 1200)
+        weights_excerpt = _read_excerpt(get_path("cognitive_weights.json"), 1200)
+        insights_excerpt = _read_excerpt(get_path("INSIGHTS.md"), 1200)
+        memory_excerpt = _read_excerpt(get_path("MEMORY_LEDGER.json"), 1200)
 
         system_prompt = (
             "You are the Manifold Self-Development Analyst. "

@@ -9,12 +9,13 @@ import requests
 from manifold.self_development import log_event
 from datetime import datetime
 import json
+from manifold.paths import get_path
 
 # Default to DeepSeek model
 DEFAULT_MODEL = os.environ.get("MANIFOLD_MODEL", "deepseek-reasoner")
 DEFAULT_GATEWAY = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
 DEFAULT_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
-FAIL_LOG = "GENESIS_FAILS.jsonl"
+FAIL_LOG = get_path("GENESIS_FAILS.jsonl")
 
 SAFE_IMPORTS = {
     "sys",
@@ -69,12 +70,12 @@ class GenesisNode:
     Forges a SKILL.md and a standalone script.py, sandboxes them, and permanently saves them.
 
     Attributes:
-        gateway_url (str): The OpenClaw HTTP Gateway URL.
+        gateway_url (str): The Manifold HTTP Gateway URL.
         skills_dir (str): The base directory for skills.
     """
     def __init__(self, gateway_url: str = None, model_name: str = None, skills_dir: str = None):
         self.gateway_url = gateway_url or DEFAULT_GATEWAY
-        self.skills_dir = skills_dir or os.path.join(os.path.expanduser("~"), ".openclaw", "skills")
+        self.skills_dir = skills_dir or get_path("skills")
         self.model = model_name or DEFAULT_MODEL
         self.api_key = DEFAULT_API_KEY
         self.templates = {
@@ -87,7 +88,7 @@ class GenesisNode:
                     "    if not url:\n"
                     "        print(\"ERROR: Missing URL argument\")\n"
                     "        return\n"
-                    "    # Output an action plan; actual browser control happens in OpenClaw tool layer\n"
+                    "    # Output an action plan; actual browser control happens in Manifold tool layer\n"
                     "    print(f\"OPEN_URL:{url}\")\n"
                     "if __name__ == '__main__':\n"
                     "    main()\n"
