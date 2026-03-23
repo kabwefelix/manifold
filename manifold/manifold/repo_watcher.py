@@ -3,6 +3,7 @@ import aiohttp
 import os
 import subprocess
 import sys
+from manifold.paths import get_path
 from datetime import datetime
 from manifold.architect import ArchitectNode
 
@@ -33,6 +34,9 @@ class RepoWatcher:
 
     def start(self):
         """Starts the background repository polling loop."""
+        print("[RepoWatcher] Disabled for surgery.")
+        return
+
         if not self.github_repo or not self.github_token:
             print("[RepoWatcher] Disabled: GITHUB_REPOSITORY or GITHUB_TOKEN environment variables missing.")
             return
@@ -176,7 +180,7 @@ class RepoWatcher:
             print(f"[RepoWatcher] Git Pull Output: {result.stdout.strip()}")
 
             # Increment Semantic Versioning
-            version_file = "VERSION.txt"
+            version_file = get_path("VERSION.txt")
             current_version = "V1.0"
 
             if os.path.exists(version_file):

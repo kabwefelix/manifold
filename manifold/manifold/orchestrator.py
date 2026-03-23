@@ -1,6 +1,7 @@
 import asyncio
 import aiohttp
 import os
+from manifold.paths import get_path
 import requests
 from typing import List, Dict, Any, Tuple, Optional
 from manifold.tool_masker import ToolMasker
@@ -91,9 +92,10 @@ class Synthesizer:
         import os
         from datetime import datetime
         try:
-            if not os.path.exists("META.json"):
+            meta_path = get_path("META.json")
+            if not os.path.exists(meta_path):
                 return
-            with open("META.json", "r", encoding="utf-8") as f:
+            with open(meta_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
 
             if domain not in data["domains"]:
@@ -103,7 +105,7 @@ class Synthesizer:
             data["domains"][domain]["losing_rigidities"].extend(losing_rigidities)
             data["last_mutation_timestamp"] = datetime.now().isoformat()
 
-            with open("META.json", "w", encoding="utf-8") as f:
+            with open(meta_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2)
             print(f"[Synthesizer] Logged empirical resolution to META.json for domain '{domain}'.")
         except Exception as e:
@@ -114,12 +116,13 @@ class Synthesizer:
         import json
         import os
         try:
-            if not os.path.exists("META.json"):
+            meta_path = get_path("META.json")
+            if not os.path.exists(meta_path):
                 return
-            with open("META.json", "r", encoding="utf-8") as f:
+            with open(meta_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
             data["api_error_count"] = data.get("api_error_count", 0) + 1
-            with open("META.json", "w", encoding="utf-8") as f:
+            with open(meta_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2)
             await log_event({"type": "api_error", "source": "synthesizer"})
         except Exception:
@@ -281,12 +284,13 @@ class Orchestrator:
         import json
         import os
         try:
-            if not os.path.exists("META.json"):
+            meta_path = get_path("META.json")
+            if not os.path.exists(meta_path):
                 return
-            with open("META.json", "r", encoding="utf-8") as f:
+            with open(meta_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
             data["api_error_count"] = data.get("api_error_count", 0) + 1
-            with open("META.json", "w", encoding="utf-8") as f:
+            with open(meta_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2)
             await log_event({"type": "api_error", "source": "orchestrator"})
         except Exception:
@@ -298,10 +302,10 @@ class Orchestrator:
         """
         # We need to construct the payload for the OpenClaw proxy
         # The proxy handles the tool execution loop natively if tools are provided
-        
+
         # Get parameter scaling
         params = Hyperparameters.scale_parameters(rigidity)
-        
+
         # Create standard OpenAI format prompt structure
         messages = [
             {"role": "system", "content": base_system},
@@ -387,7 +391,7 @@ class Orchestrator:
         base_system_prompt = "You are Manifold, an advanced cognitive architecture proxy. "
         if memory_context:
             base_system_prompt += f"\n\n{memory_context}\n\n"
-        
+
         # Determine number of concurrent passes based on complexity
         num_passes = complexity if complexity <= 3 else 3
         tasks = []
@@ -426,10 +430,10 @@ class Orchestrator:
             return "Fatal Error: All dialectic threads failed to return a valid response."
 
         print(f"\n[Orchestrator] All {len(thread_outputs)} threads completed. Initiating Synthesis...")
-        
+
         # Initiate Synthesis
         final_output = await self.synthesizer.merge(prompt, domain, thread_outputs)
-        
+
         # Add to Short Term Memory Buffer
         self.hippocampus.add_short_term(prompt, final_output)
 

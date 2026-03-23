@@ -1,5 +1,6 @@
 import os
 from typing import List
+from manifold.paths import get_path
 
 class ToolMasker:
     """
@@ -17,7 +18,7 @@ class ToolMasker:
         Args:
             skills_dir (str): The relative path to the directory containing skills.
         """
-        self.skills_dir = skills_dir or os.path.join(os.path.expanduser("~"), ".openclaw", "skills")
+        self.skills_dir = skills_dir or get_path("skills")
 
     def reload(self):
         """

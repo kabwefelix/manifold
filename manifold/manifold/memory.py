@@ -2,6 +2,7 @@ import asyncio
 import aiohttp
 import os
 import json
+from manifold.paths import get_path
 import requests
 from datetime import datetime
 from typing import List, Dict, Any, Optional
@@ -32,7 +33,7 @@ class Hippocampus:
         self.gateway_url = gateway_url or DEFAULT_GATEWAY
         self.model = model_name or DEFAULT_MODEL
         self.api_key = DEFAULT_API_KEY
-        self.ledger_file = "MEMORY_LEDGER.json"
+        self.ledger_file = get_path("MEMORY_LEDGER.json")
         
         # In-memory short-term buffer (lasts for duration of active server session)
         self.short_term_buffer: List[Dict[str, str]] = []

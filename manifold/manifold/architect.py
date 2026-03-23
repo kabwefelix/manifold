@@ -2,6 +2,7 @@ import aiohttp
 import json
 import os
 import shutil
+from manifold.paths import get_path
 from typing import Dict, Any
 
 # Default to DeepSeek model
@@ -21,9 +22,9 @@ class ArchitectNode:
         gateway_url (str): The DeepSeek API URL.
     """
 
-    def __init__(self, meta_file: str = "META.json", weights_file: str = "cognitive_weights.json", gateway_url: str = None):
-        self.meta_file = meta_file
-        self.weights_file = weights_file
+    def __init__(self, meta_file: str = None, weights_file: str = None, gateway_url: str = None):
+        self.meta_file = meta_file or get_path("META.json")
+        self.weights_file = weights_file or get_path("cognitive_weights.json")
         self.gateway_url = gateway_url or DEFAULT_GATEWAY
         self.model = DEFAULT_MODEL
         self.api_key = DEFAULT_API_KEY
@@ -44,8 +45,7 @@ class ArchitectNode:
 
             # 1. Rollback Mechanism
             if meta_data.get("api_error_count", 0) > 5:
-                print("[ArchitectNode] High error rate detected! Triggering rollback...")
-                self.rollback()
+                print("[ArchitectNode] High error rate detected! Rollback disabled for surgery.")
                 # Reset error count after rollback
                 meta_data["api_error_count"] = 0
                 with open(self.meta_file, "w", encoding="utf-8") as f:
@@ -123,7 +123,7 @@ class ArchitectNode:
 
         except Exception as e:
             print(f"[ArchitectNode] Error mutating weights file: {e}")
-            self.rollback() # If writing fails, restore backup
+            print("[ArchitectNode] Rollback disabled for surgery.")
 
         return False
 
@@ -159,15 +159,8 @@ class ArchitectNode:
 
     def rollback(self):
         """Reverts the cognitive_weights.json to the most recent backup."""
-        bak_file = f"{self.weights_file}.bak"
-        if os.path.exists(bak_file):
-            try:
-                shutil.copyfile(bak_file, self.weights_file)
-                print("[ArchitectNode] Rollback successful. Restored previous configuration.")
-            except Exception as e:
-                 print(f"[ArchitectNode] Critical Error: Failed to rollback {self.weights_file}: {e}")
-        else:
-             print("[ArchitectNode] Cannot rollback: No backup file found.")
+        print("[ArchitectNode] Rollback disabled for surgery.")
+        return
 
     async def trigger_cloud_evolution(self, issue_title: str, issue_description: str):
         """

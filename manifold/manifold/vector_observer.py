@@ -2,6 +2,7 @@ import json
 import ast
 import aiohttp
 import os
+from manifold.paths import get_path
 from typing import Dict, Any, Tuple
 
 # Default to DeepSeek Reasoner
@@ -41,7 +42,7 @@ class VectorObserver:
             "Do not include markdown blocks, backticks, or any other text. Only the JSON object."
         )
         try:
-            with open("cognitive_weights.json", "r", encoding="utf-8") as f:
+            with open(get_path("cognitive_weights.json"), "r", encoding="utf-8") as f:
                 data = json.load(f)
                 return data.get("system_prompts", {}).get("vector_observer", default_prompt)
         except Exception as e:
@@ -59,7 +60,7 @@ class VectorObserver:
             Dict[str, Any]: A dictionary containing 'domain' (str), 'rigidity' (float), and 'complexity' (int).
         """
         system_prompt = self._get_system_prompt()
-        
+
         # Use DeepSeek chat completions API (OpenAI-compatible)
         payload = {
             "model": self.model_name,
