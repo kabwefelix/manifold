@@ -32,7 +32,7 @@ class Synthesizer:
     Detects contradictions and initiates validation loops via the Genesis Node.
 
     Attributes:
-        gateway_url (str): The OpenClaw HTTP Gateway URL.
+        gateway_url (str): The Manifold HTTP Gateway URL.
         timeout (int): The timeout for the HTTP request in seconds.
         genesis_node (GenesisNode): Reference to the orchestrator's GenesisNode.
     """
@@ -257,14 +257,14 @@ class Synthesizer:
             print(f"[Synthesizer] Connection Error: {e}")
             await self._increment_api_error()
             post_log("status", "synthesizer", "idle")
-            return f"Failed to reach OpenClaw Gateway at {self.gateway_url}. Is it running?"
+            return f"Failed to reach Manifold Gateway at {self.gateway_url}. Is it running?"
 
 class Orchestrator:
     """
     Manages the execution flow, spawning background threads based on complexity and managing tool masking.
 
     Attributes:
-        gateway_url (str): The OpenClaw HTTP Gateway URL.
+        gateway_url (str): The Manifold HTTP Gateway URL.
         tool_masker (ToolMasker): Instance to handle dynamic skill masking.
         model_name (str): The model to use for LLM calls.
     """
@@ -300,7 +300,7 @@ class Orchestrator:
         """
         Executes a single threaded LLM pass with specific hyperparameters, tools, and injected context.
         """
-        # We need to construct the payload for the OpenClaw proxy
+        # We need to construct the payload for the Manifold proxy
         # The proxy handles the tool execution loop natively if tools are provided
 
         # Get parameter scaling
@@ -334,7 +334,7 @@ class Orchestrator:
                 async with session.post(f"{self.gateway_url}/v1/chat/completions", json=payload, headers=headers, timeout=30) as response:
                     if response.status == 200:
                         data = await response.json()
-                        return data.get("choices", [{}])[0].get("message", {}).get("content", "Error: OpenClaw returned empty response.")
+                        return data.get("choices", [{}])[0].get("message", {}).get("content", "Error: Manifold returned empty response.")
                     else:
                         print(f"[Orchestrator] API Error {response.status}: {await response.text()}")
                         await log_event({
@@ -352,7 +352,7 @@ class Orchestrator:
                 "error": str(e)
             })
             await self._increment_api_error()
-            return f"Failed to reach OpenClaw Gateway at {self.gateway_url}."
+            return f"Failed to reach Manifold Gateway at {self.gateway_url}."
 
     async def run(self, prompt: str, domain: str, rigidity: float, complexity: int) -> str:
         """

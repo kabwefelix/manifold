@@ -165,7 +165,7 @@ class SubconsciousEngine:
                             # Log the assistant's message
                             messages.append({"role": "assistant", "content": content})
 
-                            # Check if the AI called a tool (in a real OpenClaw integration, this would parse tool_calls)
+                            # Check if the AI called a tool (in a real Manifold integration, this would parse tool_calls)
                             # For the sake of this proxy, if the content contains the final format, we break
                             if f"[{selected_domain}] - Anomaly Detected" in content:
                                 print("[SubconsciousEngine] Formatted insight found. Ending forage.")

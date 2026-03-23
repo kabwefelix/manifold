@@ -583,7 +583,7 @@ def set_model(request: dict):
 
 @app.post("/log")
 async def post_log(request: dict):
-    """Allow external components (like OpenClaw gateway) to push activity to the manifold monitor."""
+    """Allow external components (like Manifold gateway) to push activity to the manifold monitor."""
     event_type = request.get("type", "info")
     component = request.get("component", "gateway")
     message = request.get("message", "")

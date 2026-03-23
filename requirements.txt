@@ -1,0 +1,12 @@
+# API & Networking
+fastapi>=0.100.0
+uvicorn>=0.23.0
+pydantic>=2.0.0
+requests>=2.31.0
+aiohttp>=3.9.0
+
+# Async File I/O
+aiofiles>=23.2.1
+
+# Standard library modules (already included, but listed for clarity)
+# sqlite3, json, asyncio, os, sys, re, shutil, subprocess, ast, typing, datetime, time, threading, tempfile

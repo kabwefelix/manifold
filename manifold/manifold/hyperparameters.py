@@ -46,7 +46,7 @@ class Hyperparameters:
             domain (str): The identified domain of the task.
 
         Returns:
-            str: The dynamically generated system prompt for the OpenClaw engine.
+            str: The dynamically generated system prompt for the Manifold engine.
         """
         prompt = f"You are operating within the '{domain}' domain.\n"
 

@@ -70,7 +70,7 @@ class GenesisNode:
     Forges a SKILL.md and a standalone script.py, sandboxes them, and permanently saves them.
 
     Attributes:
-        gateway_url (str): The OpenClaw HTTP Gateway URL.
+        gateway_url (str): The Manifold HTTP Gateway URL.
         skills_dir (str): The base directory for skills.
     """
     def __init__(self, gateway_url: str = None, model_name: str = None, skills_dir: str = None):
@@ -88,7 +88,7 @@ class GenesisNode:
                     "    if not url:\n"
                     "        print(\"ERROR: Missing URL argument\")\n"
                     "        return\n"
-                    "    # Output an action plan; actual browser control happens in OpenClaw tool layer\n"
+                    "    # Output an action plan; actual browser control happens in Manifold tool layer\n"
                     "    print(f\"OPEN_URL:{url}\")\n"
                     "if __name__ == '__main__':\n"
                     "    main()\n"

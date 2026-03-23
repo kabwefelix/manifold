@@ -4,7 +4,7 @@ from manifold.paths import get_path
 
 class ToolMasker:
     """
-    Handles dynamically loading and filtering OpenClaw skills based on the identified domain.
+    Handles dynamically loading and filtering Manifold skills based on the identified domain.
     It scans the `/skills` directory for `SKILL.md` files.
 
     Attributes:
@@ -37,7 +37,7 @@ class ToolMasker:
             target_domain (str): The domain identified by the VectorObserver (e.g., 'math').
 
         Returns:
-            List[str]: A list of skill directory names (the native OpenClaw skill names).
+            List[str]: A list of skill directory names (the native Manifold skill names).
         """
         masked_tools = []
 
