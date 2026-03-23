@@ -170,17 +170,46 @@ class Synthesizer:
             tool_path = await self.genesis_node.forge_tool(validation_intent, "validation")
 
             if tool_path:
-                script_path = os.path.join(tool_path, "script.py")
+                script_path = os.path.join(tool_path, "scripts", "script.py")
                 if os.path.exists(script_path):
                     post_log("tool_call", "genesis_node", f"Executing validation script", {"path": script_path})
                     try:
-                        result = subprocess.run([sys.executable, script_path, pivot_variable], capture_output=True, text=True, timeout=10)
-                        if result.returncode == 0 and result.stdout.strip():
-                            empirical_data = result.stdout.strip()
+                        import importlib.util
+                        import io
+                        spec = importlib.util.spec_from_file_location("validation_tool", script_path)
+                        tool_module = importlib.util.module_from_spec(spec)
+                        spec.loader.exec_module(tool_module)
+
+                        old_stdout = sys.stdout
+                        redirected_output = io.StringIO()
+                        sys.stdout = redirected_output
+
+                        import threading
+
+                        def run_val_tool():
+                            try:
+                                if hasattr(tool_module, "main"):
+                                    ret = tool_module.main(pivot_variable)
+                                    if ret is not None:
+                                        print(ret)
+                            except BaseException as e:
+                                print(f"Error: {e}")
+
+                        try:
+                            thread = threading.Thread(target=run_val_tool)
+                            thread.start()
+                            thread.join(timeout=10)
+                            if thread.is_alive():
+                                print("Execution Timeout: Validation took longer than 10 seconds to execute.")
+                        finally:
+                            sys.stdout = old_stdout
+
+                        empirical_data = redirected_output.getvalue().strip()
+                        if empirical_data:
                             post_log("tool_result", "genesis_node", "Ground Truth acquired", {"data": empirical_data[:100]})
                         else:
-                            post_log("error", "genesis_node", "Validation experiment failed", {"stderr": result.stderr[:100]})
-                    except Exception as e:
+                            post_log("error", "genesis_node", "Validation experiment failed", {"stderr": "No output returned"})
+                    except BaseException as e:
                         post_log("error", "genesis_node", f"Error running validation script: {e}")
         else:
              post_log("info", "synthesizer", "Consensus achieved. No friction detected.")
@@ -298,10 +327,10 @@ class Orchestrator:
         """
         # We need to construct the payload for the OpenClaw proxy
         # The proxy handles the tool execution loop natively if tools are provided
-        
+
         # Get parameter scaling
         params = Hyperparameters.scale_parameters(rigidity)
-        
+
         # Create standard OpenAI format prompt structure
         messages = [
             {"role": "system", "content": base_system},
@@ -327,19 +356,97 @@ class Orchestrator:
                 "Content-Type": "application/json"
             }
             async with aiohttp.ClientSession() as session:
-                async with session.post(f"{self.gateway_url}/v1/chat/completions", json=payload, headers=headers, timeout=30) as response:
-                    if response.status == 200:
-                        data = await response.json()
-                        return data.get("choices", [{}])[0].get("message", {}).get("content", "Error: OpenClaw returned empty response.")
-                    else:
-                        print(f"[Orchestrator] API Error {response.status}: {await response.text()}")
-                        await log_event({
-                            "type": "api_error",
-                            "source": "orchestrator",
-                            "status": response.status
-                        })
-                        await self._increment_api_error()
-                        return f"Error (Status {response.status})"
+                while True:
+                    payload["messages"] = messages
+                    async with session.post(f"{self.gateway_url}/v1/chat/completions", json=payload, headers=headers, timeout=30) as response:
+                        if response.status == 200:
+                            data = await response.json()
+                            message = data.get("choices", [{}])[0].get("message", {})
+
+                            # Log assistant message
+                            messages.append(message)
+
+                            if message.get("tool_calls"):
+                                for tool_call in message["tool_calls"]:
+                                    tool_name = tool_call["function"]["name"]
+                                    import json
+                                    try:
+                                        args = json.loads(tool_call["function"]["arguments"])
+                                    except:
+                                        args = {"input_data": tool_call["function"]["arguments"]}
+
+                                    input_data = args.get("input_data", "")
+
+                                    # Dynamically execute tool
+                                    import sys
+                                    import importlib.util
+                                    import io
+
+                                    # We construct the tool path based on Genesis node conventions
+                                    # Or simply lookup from ToolMasker's tools_dir
+                                    import os
+                                    tool_script_path = os.path.join(self.tool_masker.skills_dir, tool_name, "scripts", "script.py")
+
+                                    tool_result = ""
+                                    if os.path.exists(tool_script_path):
+                                        try:
+                                            spec = importlib.util.spec_from_file_location(f"tool_{tool_name}", tool_script_path)
+                                            tool_module = importlib.util.module_from_spec(spec)
+                                            spec.loader.exec_module(tool_module)
+
+                                            # Capture stdout for simple print scripts, or take return value
+                                            old_stdout = sys.stdout
+                                            redirected_output = io.StringIO()
+                                            sys.stdout = redirected_output
+
+                                            import threading
+
+                                            def run_tool():
+                                                try:
+                                                    if hasattr(tool_module, "main"):
+                                                        ret = tool_module.main(input_data)
+                                                        if ret is not None:
+                                                            print(ret)
+                                                except BaseException as e:
+                                                    print(f"Tool execution error: {e}")
+
+                                            try:
+                                                thread = threading.Thread(target=run_tool)
+                                                thread.start()
+                                                thread.join(timeout=10)
+                                                if thread.is_alive():
+                                                    print("Execution Timeout: Tool took longer than 10 seconds to execute.")
+                                            finally:
+                                                sys.stdout = old_stdout
+
+                                            tool_result = redirected_output.getvalue().strip()
+                                            if not tool_result:
+                                                tool_result = "Tool executed successfully but returned no output."
+                                        except BaseException as e:
+                                            tool_result = f"Error loading tool script: {e}"
+                                    else:
+                                        tool_result = f"Error: Tool script not found at {tool_script_path}"
+
+                                    # Append tool response
+                                    messages.append({
+                                        "role": "tool",
+                                        "tool_call_id": tool_call["id"],
+                                        "content": tool_result
+                                    })
+                                # Loop again with tool responses appended
+                                continue
+                            else:
+                                # No more tool calls, return final content
+                                return message.get("content", "Error: OpenClaw returned empty response.")
+                        else:
+                            print(f"[Orchestrator] API Error {response.status}: {await response.text()}")
+                            await log_event({
+                                "type": "api_error",
+                                "source": "orchestrator",
+                                "status": response.status
+                            })
+                            await self._increment_api_error()
+                            return f"Error (Status {response.status})"
         except Exception as e:
             print(f"[Orchestrator] Connection Error: {e}")
             await log_event({
@@ -387,7 +494,7 @@ class Orchestrator:
         base_system_prompt = "You are Manifold, an advanced cognitive architecture proxy. "
         if memory_context:
             base_system_prompt += f"\n\n{memory_context}\n\n"
-        
+
         # Determine number of concurrent passes based on complexity
         num_passes = complexity if complexity <= 3 else 3
         tasks = []
@@ -426,10 +533,10 @@ class Orchestrator:
             return "Fatal Error: All dialectic threads failed to return a valid response."
 
         print(f"\n[Orchestrator] All {len(thread_outputs)} threads completed. Initiating Synthesis...")
-        
+
         # Initiate Synthesis
         final_output = await self.synthesizer.merge(prompt, domain, thread_outputs)
-        
+
         # Add to Short Term Memory Buffer
         self.hippocampus.add_short_term(prompt, final_output)
 

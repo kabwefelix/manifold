@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Dict, Any
 
 class ToolMasker:
     """
@@ -17,7 +17,7 @@ class ToolMasker:
         Args:
             skills_dir (str): The relative path to the directory containing skills.
         """
-        self.skills_dir = skills_dir or os.path.join(os.path.expanduser("~"), ".openclaw", "skills")
+        self.skills_dir = skills_dir or os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools")
 
     def reload(self):
         """
@@ -27,16 +27,16 @@ class ToolMasker:
         """
         print(f"[ToolMasker] Reloading tools from '{self.skills_dir}'...")
 
-    def get_masked_tools(self, target_domain: str) -> List[str]:
+    def get_masked_tools(self, target_domain: str) -> List[Dict[str, Any]]:
         """
-        Scans the skills directory for SKILL.md files, parses their domain metadata,
-        and filters them based on the target domain.
+        Scans the skills directory for SKILL.md files, parses their metadata,
+        and filters them based on the target domain. Returns tool schemas.
 
         Args:
             target_domain (str): The domain identified by the VectorObserver (e.g., 'math').
 
         Returns:
-            List[str]: A list of skill directory names (the native OpenClaw skill names).
+            List[Dict[str, Any]]: A list of tool schema dictionaries.
         """
         masked_tools = []
 
@@ -51,17 +51,39 @@ class ToolMasker:
             if os.path.isdir(item_path):
                 skill_md_path = os.path.join(item_path, "SKILL.md")
                 if os.path.exists(skill_md_path):
-                    skill_domain = self._parse_domain_from_md(skill_md_path)
+                    metadata = self._parse_metadata_from_md(skill_md_path)
+                    skill_domain = metadata.get("domain", "general").lower()
 
                     if skill_domain == target_domain or skill_domain == "general":
-                        masked_tools.append(item) # The directory name is the skill name
+                        name = metadata.get("name", item)
+                        description = metadata.get("description", f"A tool for {name}")
+
+                        tool_schema = {
+                            "type": "function",
+                            "function": {
+                                "name": name,
+                                "description": description,
+                                "parameters": {
+                                    "type": "object",
+                                    "properties": {
+                                        "input_data": {
+                                            "type": "string",
+                                            "description": "The input to the tool."
+                                        }
+                                    },
+                                    "required": ["input_data"]
+                                }
+                            }
+                        }
+                        masked_tools.append(tool_schema)
 
         return masked_tools
 
-    def _parse_domain_from_md(self, filepath: str) -> str:
+    def _parse_metadata_from_md(self, filepath: str) -> Dict[str, str]:
         """
-        Reads a SKILL.md file and extracts the domain from the YAML frontmatter.
+        Reads a SKILL.md file and extracts all metadata from the YAML frontmatter.
         """
+        metadata = {}
         try:
             with open(filepath, 'r', encoding='utf-8') as f:
                 lines = f.readlines()
@@ -74,9 +96,10 @@ class ToolMasker:
                             continue
                         else:
                             break # End of frontmatter
-                    if in_yaml and line.lower().startswith("domain:"):
-                        return line.split(":", 1)[1].strip().lower()
+                    if in_yaml and ":" in line:
+                        key, value = line.split(":", 1)
+                        metadata[key.strip().lower()] = value.strip()
         except Exception as e:
             print(f"[ToolMasker] Error reading {filepath}: {e}")
 
-        return "general"
+        return metadata

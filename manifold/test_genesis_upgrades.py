@@ -14,10 +14,16 @@ def test_tool_masker():
         f.write("---\nname: test-skill\ndescription: A test\ndomain: browser\n---\n# Test")
     
     tools = masker.get_masked_tools("browser")
-    if "test-skill-xyz" in tools:
-        print(" [PASS] ToolMasker successfully parsed YAML domain.")
+    found = False
+    for t in tools:
+        if t.get("function", {}).get("name") == "test-skill":
+            found = True
+            break
+
+    if found:
+        print(" [PASS] ToolMasker successfully parsed YAML domain and returned schema.")
     else:
-        print(" [FAIL] ToolMasker failed to parse YAML domain.")
+        print(" [FAIL] ToolMasker failed to parse YAML domain or return schema.")
         
     # Cleanup
     os.remove(os.path.join(dummy_dir, "SKILL.md"))
@@ -28,13 +34,12 @@ def test_genesis_sandbox():
     genesis = GenesisNode()
     
     # This script simulates what the LLM should output based on the new prompt
-    test_script = '''import sys
-import requests
+    test_script = '''import requests
 
-def main():
-    if len(sys.argv) > 1 and sys.argv[1] == "test_input":
+def main(input_data: str = ""):
+    if input_data == "test_input":
         print("Test passed")
-        sys.exit(0)
+        return
     
     # Real logic that uses requests
     try:
