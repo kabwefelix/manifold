@@ -36,6 +36,14 @@ AVAILALE_MODELS = [
 
 # Current active model (mutable)
 ACTIVE_MODEL = {"model": CHAT_MODEL}
+if os.path.exists("ACTIVE_MODEL.json"):
+    try:
+        with open("ACTIVE_MODEL.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+            if "model" in data:
+                ACTIVE_MODEL["model"] = data["model"]
+    except Exception:
+        pass
 
 # Shared background components
 HIPPOCAMPUS = None
@@ -165,6 +173,9 @@ STATS = {
 
 def log_activity(event_type: str, component: str, message: str, data: dict = None):
     """Log an activity event and broadcast to SSE clients."""
+    if event_type == "tool_call":
+        STATS["total_tool_calls"] += 1
+
     entry = LOG_MANAGER.log(event_type, component, message, data)
 
     # Broadcast to all SSE clients
@@ -290,121 +301,9 @@ class Message(BaseModel):
 class ChatRequest(BaseModel):
     messages: List[Message]
 
-def call_deepseek(messages, tools=None, model=None):
-    if model is None:
-        model = ACTIVE_MODEL["model"]
-    url = "https://api.deepseek.com/v1/chat/completions"
-    headers = {
-        "Authorization": f"Bearer {API_KEY}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "model": model,
-        "messages": messages,
-        "max_tokens": 2000
-    }
-
-    if tools:
-        payload["tools"] = tools
-
-    response = requests.post(url, headers=headers, json=payload, timeout=60)
-    data = response.json()
-
-    if "choices" not in data:
-        return {"error": data}
-
-    return data["choices"][0]["message"]
-
-def execute_tool(tool_name, args):
-    """Execute a tool and return the result"""
-    try:
-        if tool_name == "read_file":
-            path = args.get("path", "")
-            # Resolve path
-            if not os.path.isabs(path):
-                path = os.path.join(os.getcwd(), path)
-            with open(path, "r", encoding="utf-8", errors="ignore") as f:
-                return {"result": f.read()[:5000]}  # Limit output
-
-        elif tool_name == "write_file":
-            path = args.get("path", "")
-            content = args.get("content", "")
-            if not os.path.isabs(path):
-                path = os.path.join(os.getcwd(), path)
-            os.makedirs(os.path.dirname(path), exist_ok=True)
-            with open(path, "w", encoding="utf-8") as f:
-                f.write(content)
-            return {"result": "File written successfully"}
-
-        elif tool_name == "list_directory":
-            path = args.get("path", ".")
-            if not os.path.isabs(path):
-                path = os.path.join(os.getcwd(), path)
-            items = os.listdir(path)
-            return {"result": "\n".join(items)}
-
-        elif tool_name == "run_command":
-            cmd = args.get("command", "")
-            timeout = args.get("timeout", 30)
-            result = subprocess.run(
-                cmd, shell=True, capture_output=True,
-                text=True, timeout=timeout,
-                cwd=os.getcwd()
-            )
-            output = result.stdout + result.stderr
-            return {"result": output[:3000]}
-
-        elif tool_name == "web_fetch":
-            url = args.get("url", "")
-            # Simple fetch - can be enhanced
-            response = requests.get(url, timeout=10)
-            # Extract text content roughly
-            from bs4 import BeautifulSoup
-            soup = BeautifulSoup(response.text, "html.parser")
-            text = soup.get_text()[:3000]
-            return {"result": text}
-
-        else:
-            return {"error": f"Unknown tool: {tool_name}"}
-
-    except Exception as e:
-        return {"error": str(e)}
-
 @app.get("/")
 def root():
     return {"status": "Manifold Agent running", "model": MODEL}
-
-def extract_dsml_tool_calls(content: str) -> List[Dict]:
-    """Extract <|DSML|> style tool calls to bridge compatibility."""
-    if not content:
-        return []
-
-    tool_calls = []
-    function_calls_match = re.search(r'<\uff5cDSML\uff5cfunction_calls>(.*?)</\uff5cDSML\uff5cfunction_calls>', content, re.DOTALL)
-
-    if function_calls_match:
-        invokes = re.finditer(r'<\uff5cDSML\uff5cinvoke name="([^"]+)">(.*?)</\uff5cDSML\uff5cinvoke>', function_calls_match.group(1), re.DOTALL)
-
-        for i, invoke in enumerate(invokes):
-            name = invoke.group(1)
-            params_text = invoke.group(2)
-
-            args = {}
-            params = re.finditer(r'<\uff5cDSML\uff5cparameter name="([^"]+)"[^>]*>(.*?)</\uff5cDSML\uff5cparameter>', params_text, re.DOTALL)
-            for param in params:
-                args[param.group(1)] = param.group(2).strip()
-
-            tool_calls.append({
-                "id": f"call_dsml_{i}",
-                "type": "function",
-                "function": {
-                    "name": name,
-                    "arguments": json.dumps(args)
-                }
-            })
-
-    return tool_calls
 
 @app.post("/chat")
 async def chat(request: ChatRequest):
@@ -412,6 +311,9 @@ async def chat(request: ChatRequest):
     if not MANIFOLD_ENABLED["enabled"]:
         log_activity("error", "system", "Chat rejected: Manifold is disabled")
         return {"error": "Manifold is currently disabled", "enabled": False}
+
+    if SUBCONSCIOUS:
+        SUBCONSCIOUS.reset_timer()
 
     STATS["total_requests"] += 1
     user_msg = next((m.content for m in reversed(request.messages) if m.role == "user"), "")
