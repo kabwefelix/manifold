@@ -316,32 +316,42 @@ def call_deepseek(messages, tools=None, model=None):
 
     return data["choices"][0]["message"]
 
+def validate_path(path: str, base_dir: str = None) -> str:
+    """Resolve and validate that a path is within the base directory (CWD by default)."""
+    if base_dir is None:
+        base_dir = os.getcwd()
+
+    base_dir = os.path.realpath(base_dir)
+    resolved_path = os.path.realpath(os.path.join(base_dir, path))
+
+    # Check if resolved_path is within base_dir
+    if os.path.commonpath([base_dir]) != os.path.commonpath([base_dir, resolved_path]):
+        raise PermissionError(f"Access denied: Path '{path}' is outside of the permitted directory.")
+
+    return resolved_path
+
 def execute_tool(tool_name, args):
     """Execute a tool and return the result"""
     try:
         if tool_name == "read_file":
             path = args.get("path", "")
-            # Resolve path
-            if not os.path.isabs(path):
-                path = os.path.join(os.getcwd(), path)
-            with open(path, "r", encoding="utf-8", errors="ignore") as f:
+            resolved_path = validate_path(path)
+            with open(resolved_path, "r", encoding="utf-8", errors="ignore") as f:
                 return {"result": f.read()[:5000]}  # Limit output
 
         elif tool_name == "write_file":
             path = args.get("path", "")
             content = args.get("content", "")
-            if not os.path.isabs(path):
-                path = os.path.join(os.getcwd(), path)
-            os.makedirs(os.path.dirname(path), exist_ok=True)
-            with open(path, "w", encoding="utf-8") as f:
+            resolved_path = validate_path(path)
+            os.makedirs(os.path.dirname(resolved_path), exist_ok=True)
+            with open(resolved_path, "w", encoding="utf-8") as f:
                 f.write(content)
             return {"result": "File written successfully"}
 
         elif tool_name == "list_directory":
             path = args.get("path", ".")
-            if not os.path.isabs(path):
-                path = os.path.join(os.getcwd(), path)
-            items = os.listdir(path)
+            resolved_path = validate_path(path)
+            items = os.listdir(resolved_path)
             return {"result": "\n".join(items)}
 
         elif tool_name == "run_command":
