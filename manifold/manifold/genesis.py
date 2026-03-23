@@ -4,7 +4,7 @@ import re
 import sys
 import subprocess
 import ast
-from typing import Tuple, Dict, Optional
+from typing import Tuple, Optional
 import requests
 from manifold.self_development import log_event
 from datetime import datetime
