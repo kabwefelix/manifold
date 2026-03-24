@@ -1,9 +1,0 @@
-{"type": "genesis_failed", "domain": "web", "reason": "max_attempts_exhausted", "intent": "Open YouTube and play me and jazz music which is at least one hour long", "ts": "2026-03-18T08:46:56Z"}
-{"type": "genesis_failed", "domain": "web", "reason": "forge_failed", "intent": "Open YouTube and play me and jazz music which is at least one hour long", "ts": "2026-03-18T08:46:57Z"}
-{"type": "genesis_failed", "domain": "web", "reason": "max_attempts_exhausted", "intent": "Open YouTube and play me and jazz music which is at least one hour long", "ts": "2026-03-18T09:26:26Z"}
-{"type": "genesis_failed", "domain": "web", "reason": "forge_failed", "intent": "Open YouTube and play me and jazz music which is at least one hour long", "ts": "2026-03-18T09:26:27Z"}
-{"type": "genesis_failed", "domain": "web", "reason": "max_attempts_exhausted", "intent": "Open YouTube and play me and jazz music which is at least one hour long", "ts": "2026-03-18T09:33:21Z"}
-{"type": "genesis_failed", "domain": "web", "reason": "forge_failed", "intent": "Open YouTube and play me and jazz music which is at least one hour long", "ts": "2026-03-18T09:33:22Z"}
-{"type": "genesis_failed", "domain": "web", "reason": "connection_error", "intent": "Does Google have an \"Antigravity\" project or API? What is it? Provide details about any official Google antigravity-related APIs, projects, or products.", "ts": "2026-03-23T08:51:41Z"}
-{"type": "genesis_failed", "domain": "web", "reason": "forge_failed", "intent": "Does Google have an \"Antigravity\" project or API? What is it? Provide details about any official Google antigravity-related APIs, projects, or products.", "ts": "2026-03-23T08:51:42Z"}
-{"type": "genesis_sandbox_failed", "domain": "web", "ts": "2026-03-23T08:53:47Z"}
