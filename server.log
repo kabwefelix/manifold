@@ -1,0 +1,10 @@
+INFO:     Started server process [31580]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:18790 (Press CTRL+C to quit)
+[SubconsciousEngine] Started. Idle timeout set to 900s.
+INFO:     127.0.0.1:35222 - "GET /status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35232 - "GET /models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35238 - "GET /activity?limit=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35238 - "GET /events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35232 - "GET /components HTTP/1.1" 200 OK

@@ -1,0 +1,174 @@
+{"type": "genesis_failed", "domain": "web", "reason": "max_attempts_exhausted", "intent": "Open YouTube and play me and jazz music which is at least one hour long", "ts": "2026-03-18T08:46:56Z"}
+{"type": "genesis_failed", "domain": "web", "reason": "forge_failed", "intent": "Open YouTube and play me and jazz music which is at least one hour long", "ts": "2026-03-18T08:46:57Z"}
+{"type": "genesis_failed", "domain": "web", "reason": "max_attempts_exhausted", "intent": "Open YouTube and play me and jazz music which is at least one hour long", "ts": "2026-03-18T09:26:26Z"}
+{"type": "genesis_failed", "domain": "web", "reason": "forge_failed", "intent": "Open YouTube and play me and jazz music which is at least one hour long", "ts": "2026-03-18T09:26:27Z"}
+{"type": "genesis_failed", "domain": "web", "reason": "max_attempts_exhausted", "intent": "Open YouTube and play me and jazz music which is at least one hour long", "ts": "2026-03-18T09:33:21Z"}
+{"type": "genesis_failed", "domain": "web", "reason": "forge_failed", "intent": "Open YouTube and play me and jazz music which is at least one hour long", "ts": "2026-03-18T09:33:22Z"}
+{"type": "genesis_failed", "domain": "web", "reason": "connection_error", "intent": "Does Google have an \"Antigravity\" project or API? What is it? Provide details about any official Google antigravity-related APIs, projects, or products.", "ts": "2026-03-23T08:51:41Z"}
+{"type": "genesis_failed", "domain": "web", "reason": "forge_failed", "intent": "Does Google have an \"Antigravity\" project or API? What is it? Provide details about any official Google antigravity-related APIs, projects, or products.", "ts": "2026-03-23T08:51:42Z"}
+{"type": "genesis_sandbox_failed", "domain": "web", "ts": "2026-03-23T08:53:47Z"}
+{"type": "self_dev_reflection_complete", "actions_queued": 1, "ts": "2026-03-23T20:27:57Z"}
+{"type": "self_dev_action_applied", "action_type": "adjust_domain_rigidity_bias", "ts": "2026-03-23T20:27:57Z"}
+{"type": "dream_insight", "domain": "Metaphysical Exploration", "ts": "2026-03-23T20:28:17Z"}
+{"type": "self_dev_reflection_complete", "actions_queued": 1, "ts": "2026-03-23T20:44:15Z"}
+{"type": "self_dev_action_applied", "action_type": "adjust_domain_rigidity_bias", "ts": "2026-03-23T20:44:15Z"}
+{"type": "dream_insight", "domain": "Logistics/Importing", "ts": "2026-03-23T20:44:42Z"}
+{"type": "api_error", "source": "orchestrator", "error": "Gateway status 401: {\"error\":{\"message\":\"Authentication Fails, Your api key: ****9f41 is invalid\",\"type\":\"authentication_error\",\"param\":null,\"code\":\"invalid_request_error\"}}", "ts": "2026-03-23T20:50:18Z"}
+{"type": "api_error", "source": "orchestrator", "ts": "2026-03-23T20:50:18Z"}
+{"type": "api_error", "source": "orchestrator", "error": "Gateway status 401: {\"error\":{\"message\":\"Authentication Fails, Your api key: ****9f41 is invalid\",\"type\":\"authentication_error\",\"param\":null,\"code\":\"invalid_request_error\"}}", "ts": "2026-03-23T20:50:27Z"}
+{"type": "api_error", "source": "orchestrator", "ts": "2026-03-23T20:50:27Z"}
+{"type": "api_error", "source": "orchestrator", "error": "Gateway status 401: {\"error\":{\"message\":\"Authentication Fails, Your api key: ****9f41 is invalid\",\"type\":\"authentication_error\",\"param\":null,\"code\":\"invalid_request_error\"}}", "ts": "2026-03-23T20:53:23Z"}
+{"type": "api_error", "source": "orchestrator", "ts": "2026-03-23T20:53:23Z"}
+{"type": "api_error", "source": "orchestrator", "error": "Gateway status 401: {\"error\":{\"message\":\"Authentication Fails, Your api key: ****9f41 is invalid\",\"type\":\"authentication_error\",\"param\":null,\"code\":\"invalid_request_error\"}}", "ts": "2026-03-23T21:03:07Z"}
+{"type": "api_error", "source": "orchestrator", "ts": "2026-03-23T21:03:07Z"}
+{"type": "api_error", "source": "orchestrator", "error": "Gateway status 401: {\"error\":{\"message\":\"Authentication Fails, Your api key: ****9f41 is invalid\",\"type\":\"authentication_error\",\"param\":null,\"code\":\"invalid_request_error\"}}", "ts": "2026-03-23T21:03:56Z"}
+{"type": "api_error", "source": "orchestrator", "ts": "2026-03-23T21:03:56Z"}
+{"type": "self_dev_reflection_error", "status": 401, "ts": "2026-03-23T21:08:07Z"}
+{"type": "api_error", "source": "orchestrator", "error": "Gateway status 401: {\"error\":{\"message\":\"Authentication Fails, Your api key: ****9f41 is invalid\",\"type\":\"authentication_error\",\"param\":null,\"code\":\"invalid_request_error\"}}", "ts": "2026-03-23T21:13:07Z"}
+{"type": "api_error", "source": "orchestrator", "ts": "2026-03-23T21:13:07Z"}
+{"type": "self_dev_reflection_error", "status": 401, "ts": "2026-03-23T21:23:12Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-23T21:45:08Z"}
+{"type": "dream_insight", "domain": "Logistics/Importing", "ts": "2026-03-23T21:45:19Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-23T22:01:21Z"}
+{"type": "dream_insight", "domain": "Algorithmic Efficiency", "ts": "2026-03-23T22:01:48Z"}
+{"type": "genesis_failed", "domain": "web", "reason": "connection_error", "intent": "can you browse the web", "ts": "2026-03-23T22:13:15Z"}
+{"type": "genesis_failed", "domain": "web", "reason": "forge_failed", "intent": "can you browse the web", "ts": "2026-03-23T22:13:16Z"}
+{"type": "self_dev_reflection_complete", "actions_queued": 2, "ts": "2026-03-23T22:17:49Z"}
+{"type": "self_dev_action_failed", "action_type": "adjust_domain_rigidity_bias", "ts": "2026-03-23T22:17:49Z"}
+{"type": "self_dev_action_applied", "action_type": "note_only", "ts": "2026-03-23T22:17:49Z"}
+{"type": "dream_insight", "domain": "Physics Research", "ts": "2026-03-23T22:17:59Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-23T22:34:00Z"}
+{"type": "dream_insight", "domain": "Physics Research", "ts": "2026-03-23T22:34:10Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-23T22:50:12Z"}
+{"type": "dream_insight", "domain": "Market Anomalies", "ts": "2026-03-23T22:50:24Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-23T23:06:26Z"}
+{"type": "dream_insight", "domain": "Physics Research", "ts": "2026-03-23T23:06:57Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-23T23:22:58Z"}
+{"type": "dream_insight", "domain": "Physics Research", "ts": "2026-03-23T23:23:29Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-23T23:39:31Z"}
+{"type": "dream_insight", "domain": "Metaphysical Exploration", "ts": "2026-03-23T23:40:01Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-23T23:56:02Z"}
+{"type": "dream_insight", "domain": "Physics Research", "ts": "2026-03-23T23:56:23Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T00:12:24Z"}
+{"type": "dream_insight", "domain": "Algorithmic Efficiency", "ts": "2026-03-24T00:13:03Z"}
+{"type": "self_dev_reflection_complete", "actions_queued": 2, "ts": "2026-03-24T00:28:56Z"}
+{"type": "self_dev_action_applied", "action_type": "append_vector_observer_constraint", "ts": "2026-03-24T00:28:56Z"}
+{"type": "self_dev_action_applied", "action_type": "note_only", "ts": "2026-03-24T00:28:56Z"}
+{"type": "dream_insight", "domain": "Metaphysical Exploration", "ts": "2026-03-24T00:29:37Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T00:45:39Z"}
+{"type": "dream_insight", "domain": "Physics Research", "ts": "2026-03-24T00:45:51Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T01:01:52Z"}
+{"type": "dream_insight", "domain": "Market Anomalies", "ts": "2026-03-24T01:02:40Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T01:18:42Z"}
+{"type": "dream_insight", "domain": "Logistics/Importing", "ts": "2026-03-24T01:18:58Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T01:34:59Z"}
+{"type": "dream_insight", "domain": "Market Anomalies", "ts": "2026-03-24T01:35:38Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T01:51:40Z"}
+{"type": "dream_insight", "domain": "Algorithmic Efficiency", "ts": "2026-03-24T01:52:24Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T02:08:25Z"}
+{"type": "dream_insight", "domain": "Market Anomalies", "ts": "2026-03-24T02:09:18Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T02:25:20Z"}
+{"type": "dream_insight", "domain": "Logistics/Importing", "ts": "2026-03-24T02:26:06Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T02:42:08Z"}
+{"type": "dream_insight", "domain": "Market Anomalies", "ts": "2026-03-24T02:43:01Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T02:59:08Z"}
+{"type": "dream_insight", "domain": "Algorithmic Efficiency", "ts": "2026-03-24T02:59:52Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T03:15:55Z"}
+{"type": "dream_insight", "domain": "Physics Research", "ts": "2026-03-24T03:16:13Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T03:32:16Z"}
+{"type": "dream_insight", "domain": "Market Anomalies", "ts": "2026-03-24T03:33:14Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T03:49:15Z"}
+{"type": "dream_insight", "domain": "Metaphysical Exploration", "ts": "2026-03-24T03:49:59Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T04:06:01Z"}
+{"type": "dream_insight", "domain": "Logistics/Importing", "ts": "2026-03-24T04:06:57Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T04:23:00Z"}
+{"type": "dream_insight", "domain": "Physics Research", "ts": "2026-03-24T04:23:35Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T04:39:36Z"}
+{"type": "dream_insight", "domain": "Algorithmic Efficiency", "ts": "2026-03-24T04:41:18Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:01:45Z"}
+{"type": "dream_insight", "domain": "Logistics/Importing", "ts": "2026-03-24T05:03:06Z"}
+{"type": "subconscious_immediate_reflection", "reason": "Error in orchestrator", "details": {"error": "429 Client Error: Too Many Requests for url: https://www.google.com/sorry/index?continue=https://www.youtube.com/watch%3Fv%3DjfKfPfyJRdk&q=EgRrvR1UGNK2iM4GIjCNMf0kUHaWBrOC0TtEzPdwBlI6571G--Gj6ugADVAvVFAQ_UepJ_lb-sgQHEG8BBcyAnJSWgFD"}, "ts": "2026-03-24T05:04:40Z"}
+{"type": "subconscious_immediate_reflection", "reason": "Error in orchestrator", "details": {"error": "429 Client Error: Too Many Requests for url: https://www.google.com/sorry/index?continue=https://www.youtube.com/watch%3Fv%3DsmJtMxknJxM&q=EgRrvR1UGNu2iM4GIjDSsDxoS8l_lf8J43IsB9y5uVGYyZOTYEOxu9thVw0idyiwGtErLUZX7NySV1GlqAAyAnJSWgFD"}, "ts": "2026-03-24T05:04:41Z"}
+{"type": "subconscious_immediate_reflection", "reason": "Error in orchestrator", "details": {"error": "429 Client Error: Too Many Requests for url: https://www.google.com/sorry/index?continue=https://www.youtube.com/watch%3Fv%3D0Ly3iFPQrNY&q=EgRrvR1UGOK2iM4GIjDz3nR-vUv9BeNEyBJM0bz-SRiu-4YaBYV64jSiJ4BC7E3WoBFcaaEv5EHdviAi_wUyAnJSWgFD"}, "ts": "2026-03-24T05:04:42Z"}
+{"type": "api_error", "source": "orchestrator", "error": "", "ts": "2026-03-24T05:05:14Z"}
+{"type": "subconscious_immediate_reflection", "reason": "Error in orchestrator", "details": {}, "ts": "2026-03-24T05:05:15Z"}
+{"type": "api_error", "source": "orchestrator", "ts": "2026-03-24T05:05:15Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:05:24Z"}
+{"type": "subconscious_immediate_reflection", "reason": "Error in orchestrator", "details": {"error": "429 Client Error: Too Many Requests for url: https://www.google.com/sorry/index?continue=https://www.youtube.com/watch%3Fv%3DfEvM-OUbaKs&q=EgRrvR1UGJe3iM4GIjCa4VQxkfSHb1cNT7nSD0rXbkWzpBNnRvfwBFsYSiD1rVYZDpghU62sChG0aTSHy1cyAnJSWgFD"}, "ts": "2026-03-24T05:05:35Z"}
+{"type": "api_error", "source": "orchestrator", "error": "", "ts": "2026-03-24T05:05:39Z"}
+{"type": "subconscious_immediate_reflection", "reason": "Error in orchestrator", "details": {}, "ts": "2026-03-24T05:05:40Z"}
+{"type": "api_error", "source": "orchestrator", "ts": "2026-03-24T05:05:40Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:05:46Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:05:46Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:05:46Z"}
+{"type": "dream_insight", "domain": "Metaphysical Exploration", "ts": "2026-03-24T05:05:52Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:06:16Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:06:35Z"}
+{"type": "api_error", "source": "orchestrator", "error": "", "ts": "2026-03-24T05:06:42Z"}
+{"type": "subconscious_immediate_reflection", "reason": "Error in orchestrator", "details": {}, "ts": "2026-03-24T05:06:43Z"}
+{"type": "api_error", "source": "orchestrator", "ts": "2026-03-24T05:06:43Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:06:46Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:07:44Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:09:07Z"}
+{"type": "dream_insight", "domain": "Market Anomalies", "ts": "2026-03-24T05:09:58Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:12:02Z"}
+{"type": "dream_insight", "domain": "Metaphysical Exploration", "ts": "2026-03-24T05:13:02Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:15:59Z"}
+{"type": "dream_insight", "domain": "Metaphysical Exploration", "ts": "2026-03-24T05:16:13Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:19:02Z"}
+{"type": "dream_insight", "domain": "Physics Research", "ts": "2026-03-24T05:19:20Z"}
+{"type": "api_error", "source": "orchestrator", "error": "", "ts": "2026-03-24T05:21:14Z"}
+{"type": "subconscious_immediate_reflection", "reason": "Error in orchestrator", "details": {}, "ts": "2026-03-24T05:21:15Z"}
+{"type": "api_error", "source": "orchestrator", "ts": "2026-03-24T05:21:15Z"}
+{"type": "api_error", "source": "orchestrator", "error": "", "ts": "2026-03-24T05:21:45Z"}
+{"type": "subconscious_immediate_reflection", "reason": "Error in orchestrator", "details": {}, "ts": "2026-03-24T05:21:46Z"}
+{"type": "api_error", "source": "orchestrator", "ts": "2026-03-24T05:21:46Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:22:14Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:22:16Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:22:47Z"}
+{"type": "dream_insight", "domain": "Algorithmic Efficiency", "ts": "2026-03-24T05:23:29Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:26:14Z"}
+{"type": "dream_insight", "domain": "Metaphysical Exploration", "ts": "2026-03-24T05:27:11Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:29:30Z"}
+{"type": "dream_insight", "domain": "Logistics/Importing", "ts": "2026-03-24T05:30:22Z"}
+{"type": "subconscious_immediate_reflection", "reason": "Error in orchestrator", "details": {"error": "429 Client Error: Too Many Requests for url: https://www.google.com/sorry/index?continue=https://www.youtube.com/watch%3Fv%3D2B8ZtT0R18c&q=EgRrvR1UGLfEiM4GIjBuTji-5Bz6MBLyKNSDZvoibPxGJcFJ--2OuULf9EyVFdNVOLjFPAiLQFzCF807fOwyAnJSWgFD"}, "ts": "2026-03-24T05:33:54Z"}
+{"type": "api_error", "source": "orchestrator", "error": "", "ts": "2026-03-24T05:34:09Z"}
+{"type": "subconscious_immediate_reflection", "reason": "Error in orchestrator", "details": {}, "ts": "2026-03-24T05:34:10Z"}
+{"type": "api_error", "source": "orchestrator", "ts": "2026-03-24T05:34:10Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:34:55Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:35:11Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:36:23Z"}
+{"type": "dream_insight", "domain": "Algorithmic Efficiency", "ts": "2026-03-24T05:36:44Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:37:57Z"}
+{"type": "api_error", "source": "orchestrator", "error": "", "ts": "2026-03-24T05:41:28Z"}
+{"type": "api_error", "source": "orchestrator", "ts": "2026-03-24T05:41:28Z"}
+{"type": "subconscious_immediate_reflection", "reason": "Error in orchestrator", "details": {}, "ts": "2026-03-24T05:41:29Z"}
+{"type": "subconscious_immediate_reflection", "reason": "Error in orchestrator", "details": {"error": "HTTPSConnectionPool(host='www.youtube.com', port=443): Read timed out. (read timeout=10)"}, "ts": "2026-03-24T05:41:46Z"}
+{"type": "subconscious_immediate_reflection", "reason": "Error in orchestrator", "details": {"error": "429 Client Error: Too Many Requests for url: https://www.google.com/sorry/index?continue=https://www.youtube.com/watch%3Fv%3DOPf0YbXqDm0&q=EgRrvR1UGKXIiM4GIjCN12B5Z6WJCLq6HgwnuKhnqRa1s_UsCCCfwnV_41OD9qXLFYa6Op569jPWyBFGKboyAnJSWgFD"}, "ts": "2026-03-24T05:42:10Z"}
+{"type": "subconscious_immediate_reflection", "reason": "Error in orchestrator", "details": {"error": "HTTPSConnectionPool(host='www.youtube.com', port=443): Read timed out. (read timeout=10)"}, "ts": "2026-03-24T05:42:30Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:42:30Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:42:52Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:43:10Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:43:31Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:46:10Z"}
+{"type": "dream_insight", "domain": "Logistics/Importing", "ts": "2026-03-24T05:47:45Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T05:53:46Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T06:00:35Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T06:07:07Z"}
+{"type": "dream_insight", "domain": "Logistics/Importing", "ts": "2026-03-24T06:07:31Z"}
+{"type": "api_error", "source": "orchestrator", "error": "'charmap' codec can't encode character '\\U0001f3b5' in position 778: character maps to <undefined>", "ts": "2026-03-24T06:10:32Z"}
+{"type": "subconscious_immediate_reflection", "reason": "Error in orchestrator", "details": {}, "ts": "2026-03-24T06:10:33Z"}
+{"type": "api_error", "source": "orchestrator", "ts": "2026-03-24T06:10:33Z"}
+{"type": "contradiction_detected", "domain": "web", "pivot": "success of playing the song", "ts": "2026-03-24T06:10:41Z"}
+{"type": "subconscious_immediate_reflection", "reason": "Error in synthesizer", "details": {"pivot": "success of playing the song"}, "ts": "2026-03-24T06:10:43Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T06:11:33Z"}
+{"type": "genesis_failed", "domain": "validation", "reason": "connection_error", "intent": "Write a validation script to definitively find the true value of: success of playing the song", "ts": "2026-03-24T06:11:45Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T06:11:45Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T06:13:36Z"}
+{"type": "dream_insight", "domain": "Logistics/Importing", "ts": "2026-03-24T06:14:41Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T06:20:45Z"}
+{"type": "dream_insight", "domain": "Market Anomalies", "ts": "2026-03-24T06:21:08Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T06:27:09Z"}
+{"type": "dream_insight", "domain": "Logistics/Importing", "ts": "2026-03-24T06:27:28Z"}
+{"type": "self_dev_reflection_exception", "error": "", "ts": "2026-03-24T06:33:29Z"}
+{"type": "dream_insight", "domain": "Algorithmic Efficiency", "ts": "2026-03-24T06:34:25Z"}

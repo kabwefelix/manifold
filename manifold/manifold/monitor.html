@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manifold Control Deck</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-0: #071318;
+            --bg-1: #0d1f26;
+            --bg-2: #122a33;
+            --panel: rgba(12, 23, 29, 0.9);
+            --panel-soft: rgba(18, 36, 44, 0.82);
+            --panel-strong: rgba(8, 17, 22, 0.96);
+            --line: rgba(150, 191, 198, 0.12);
+            --line-strong: rgba(150, 191, 198, 0.24);
+            --text: #eef7f5;
+            --muted: #9fb8bb;
+            --soft: #dbe9e6;
+            --teal: #73dbc4;
+            --teal-strong: #39bea6;
+            --cyan: #7cc8f2;
+            --amber: #f0bb67;
+            --coral: #ff8464;
+            --rose: #ffb79f;
+            --shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+            --radius-lg: 28px;
+            --radius-md: 20px;
+            --radius-sm: 14px;
+        }
+
+        * { box-sizing: border-box; }
+        html, body { margin: 0; min-height: 100%; }
+        body {
+            font-family: "Space Grotesk", sans-serif;
+            color: var(--text);
+            overflow: hidden;
+            background:
+                radial-gradient(circle at top left, rgba(115, 219, 196, 0.18), transparent 32%),
+                radial-gradient(circle at bottom right, rgba(124, 200, 242, 0.12), transparent 28%),
+                linear-gradient(180deg, #112128 0%, var(--bg-0) 48%, #050d12 100%);
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px);
+            background-size: 28px 28px;
+            mask-image: linear-gradient(180deg, rgba(0,0,0,0.58), transparent);
+            pointer-events: none;
+        }
+
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(159, 184, 187, 0.24);
+            border-radius: 999px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+        ::-webkit-scrollbar-track { background: transparent; }
+
+        .shell {
+            position: relative;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 18px;
+            display: grid;
+            grid-template-columns: 300px minmax(0, 1fr);
+            gap: 18px;
+            min-height: 100vh;
+            height: 100vh;
+        }
+
+        .rail, .workspace-shell, .surface, .summary-card, .signal-card, .panel-card {
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(16px);
+        }
+
+        .rail {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            padding: 18px;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(180deg, rgba(14, 28, 34, 0.95), rgba(8, 18, 22, 0.92));
+            position: sticky;
+            top: 18px;
+            height: calc(100vh - 36px);
+        }
+
+        .brand-mark {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--teal);
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 11px;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+        }
+
+        .brand-mark::before {
+            content: "";
+            width: 12px;
+            height: 12px;
+            border-radius: 4px;
+            background: linear-gradient(135deg, var(--teal), var(--cyan));
+            box-shadow: 0 0 18px rgba(115, 219, 196, 0.34);
+        }
+
+        .brand h1 {
+            margin: 8px 0 6px;
+            font-size: 1.9rem;
+            line-height: 0.98;
+            letter-spacing: -0.05em;
+        }
+
+        .brand p, .microcopy, .subtext, .meta-text, .empty-state, .note-text {
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .surface {
+            background: linear-gradient(180deg, rgba(18, 36, 44, 0.84), rgba(9, 19, 24, 0.82));
+            border-radius: var(--radius-md);
+            padding: 14px;
+        }
+
+        .field-label, .section-kicker, .stat-label, .tag, .bubble-meta, .chip, .activity-meta, .detail-label, .tool-meta {
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 11px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .field-stack, .surface-grid, .nav-list, .mini-list, .overview-grid, .view-grid, .chat-layout, .tool-grid, .activity-layout, .detail-stack {
+            display: grid;
+            gap: 12px;
+        }
+
+        .field-stack { gap: 8px; }
+        input[type="text"], textarea, select {
+            width: 100%;
+            border: 1px solid var(--line-strong);
+            border-radius: 14px;
+            background: rgba(4, 11, 15, 0.56);
+            color: var(--soft);
+            padding: 12px 14px;
+            font: inherit;
+            outline: none;
+            transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+        }
+        input[type="text"]:focus, textarea:focus, select:focus {
+            border-color: rgba(115, 219, 196, 0.58);
+            background: rgba(7, 15, 18, 0.92);
+            transform: translateY(-1px);
+        }
+        textarea { resize: vertical; min-height: 132px; line-height: 1.55; }
+
+        button {
+            border: 1px solid transparent;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--teal), var(--teal-strong));
+            color: #072129;
+            padding: 11px 16px;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+        }
+        button:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(57, 190, 166, 0.22); }
+        button:disabled { opacity: 0.58; cursor: not-allowed; transform: none; box-shadow: none; }
+        .ghost-btn {
+            background: rgba(255,255,255,0.04);
+            color: var(--soft);
+            border-color: var(--line);
+        }
+        .danger-btn {
+            background: linear-gradient(135deg, var(--rose), var(--coral));
+            color: #2b120d;
+        }
+
+        .row, .inline-actions, .toolbar, .header-actions, .filter-row, .composer-footer, .action-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .status-pill, .count-pill, .component-state, .event-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.03);
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 11px;
+            color: var(--soft);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--muted);
+        }
+        .status-dot.online { background: var(--teal); box-shadow: 0 0 18px rgba(115, 219, 196, 0.34); }
+        .status-dot.offline { background: var(--coral); box-shadow: 0 0 18px rgba(255, 132, 100, 0.3); }
+
+        .nav-list { margin-top: 6px; }
+        .nav-button {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 14px;
+            border-radius: 16px;
+            border: 1px solid transparent;
+            background: rgba(255,255,255,0.03);
+            color: var(--soft);
+            text-align: left;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .nav-button small { color: var(--muted); font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: 0.12em; }
+        .nav-button.active {
+            background: linear-gradient(135deg, rgba(33, 77, 74, 0.86), rgba(17, 36, 43, 0.95));
+            border-color: rgba(115, 219, 196, 0.42);
+            color: white;
+        }
+
+        .mini-list { max-height: 320px; overflow: auto; }
+        .mini-item, .quick-prompt, .summary-card, .signal-card, .panel-card, .activity-item, .tool-card, .growth-card, .bubble, .component-tile {
+            border-radius: 18px;
+            border: 1px solid var(--line);
+            background: linear-gradient(180deg, rgba(17, 32, 39, 0.88), rgba(7, 16, 21, 0.9));
+        }
+
+        .mini-item, .quick-prompt, .activity-item, .tool-card, .growth-card, .component-tile { padding: 14px; }
+        .mini-item strong, .summary-value, .signal-card strong, .tool-card strong { display: block; color: var(--soft); }
+        .mini-item strong { margin-bottom: 6px; }
+
+        .workspace-shell {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            min-height: calc(100vh - 36px);
+            height: calc(100vh - 36px);
+            border-radius: var(--radius-lg);
+            background: linear-gradient(180deg, rgba(13, 25, 31, 0.94), rgba(6, 15, 19, 0.92));
+            overflow: hidden;
+        }
+
+        .workspace-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 18px;
+            align-items: center;
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--line);
+            background: rgba(255,255,255,0.02);
+        }
+        .workspace-header h2 { margin: 6px 0 0; font-size: 1.55rem; letter-spacing: -0.04em; }
+        .workspace-header p { margin: 6px 0 0; color: var(--muted); }
+
+        .workspace-body { padding: 18px 22px 22px; min-height: 0; flex: 1; overflow: auto; }
+        .view { display: none; min-height: 0; }
+        .view.active { display: block; }
+
+        .overview-grid {
+            grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+            align-items: start;
+        }
+
+        .summary-cluster {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .summary-card { padding: 16px; }
+        .summary-value { font-size: clamp(1.2rem, 2vw, 1.9rem); letter-spacing: -0.05em; margin-top: 8px; }
+        .summary-subtext { color: var(--muted); font-size: 13px; margin-top: 6px; }
+
+        .pipeline-card, .signal-stack, .feed-card, .chat-panel, .sidebar-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .panel-card { padding: 16px; }
+        .pipeline {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+            align-items: center;
+        }
+
+        .pipeline-step {
+            position: relative;
+            padding: 14px 12px;
+            border-radius: 18px;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.03);
+            text-align: center;
+        }
+        .pipeline-step.active {
+            border-color: rgba(115, 219, 196, 0.5);
+            background: linear-gradient(135deg, rgba(24, 67, 61, 0.76), rgba(13, 26, 31, 0.9));
+            box-shadow: inset 0 0 0 1px rgba(115, 219, 196, 0.12);
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .component-tile.active {
+            border-color: rgba(115, 219, 196, 0.44);
+            background: linear-gradient(135deg, rgba(26, 66, 63, 0.84), rgba(10, 21, 27, 0.92));
+        }
+
+        .signal-stack { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .signal-card { padding: 16px; min-height: 120px; }
+        .signal-card .signal-label { margin-bottom: 10px; }
+
+        .feed-list, .growth-list, .tool-list, .activity-list, .chat-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 0;
+        }
+
+        .feed-list, .growth-list, .tool-list, .activity-list { max-height: 460px; overflow: auto; }
+        .activity-layout { grid-template-columns: minmax(0, 1.25fr) 340px; align-items: start; }
+        .activity-main, .activity-side, .chat-stage, .chat-side, .tool-column { display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+        .activity-main .panel-card, .activity-side .panel-card, .chat-stage .panel-card, .chat-side .panel-card, .tool-column .panel-card { min-height: 0; }
+
+        .activity-item {
+            cursor: pointer;
+            transition: border-color 0.16s ease, transform 0.16s ease;
+        }
+        .activity-item:hover { transform: translateY(-1px); border-color: var(--line-strong); }
+        .activity-item.selected { border-color: rgba(124, 200, 242, 0.48); box-shadow: inset 0 0 0 1px rgba(124, 200, 242, 0.15); }
+        .activity-title { margin-top: 8px; line-height: 1.55; }
+        .activity-data {
+            margin-top: 10px;
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.04);
+            color: var(--muted);
+            white-space: pre-wrap;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 12px;
+        }
+
+        .detail-stack { gap: 10px; }
+        .detail-card {
+            padding: 14px;
+            border-radius: 16px;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.03);
+        }
+        .detail-value { color: var(--soft); line-height: 1.6; word-break: break-word; }
+
+        .chat-layout { grid-template-columns: minmax(0, 1.3fr) 330px; align-items: start; }
+        .chat-feed {
+            height: 520px;
+            overflow: auto;
+            padding: 4px 6px 4px 0;
+            scroll-behavior: smooth;
+            padding-right: 4px;
+        }
+        .bubble { padding: 14px 15px; max-width: 92%; }
+        .bubble.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, rgba(57, 190, 166, 0.94), rgba(115, 219, 196, 0.9));
+            color: #052129;
+            border-color: rgba(115, 219, 196, 0.2);
+        }
+        .bubble.assistant { align-self: flex-start; }
+        .bubble-content { line-height: 1.7; }
+        .bubble pre {
+            margin: 12px 0 0;
+            padding: 12px;
+            border-radius: 14px;
+            background: rgba(0,0,0,0.3);
+            overflow-x: auto;
+            white-space: pre-wrap;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 12px;
+        }
+        .bubble code {
+            font-family: "IBM Plex Mono", monospace;
+            background: rgba(255,255,255,0.08);
+            border-radius: 8px;
+            padding: 1px 6px;
+        }
+        .bubble a { color: var(--cyan); }
+        .bubble-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .quick-prompts {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .quick-prompt {
+            cursor: pointer;
+            color: var(--soft);
+            padding: 16px;
+            text-align: left;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            border-color: rgba(115, 219, 196, 0.12);
+            background: linear-gradient(180deg, rgba(18, 36, 44, 0.92), rgba(8, 18, 22, 0.94));
+            transition: border-color 0.16s ease, transform 0.16s ease;
+        }
+        .quick-prompt strong { color: var(--soft); line-height: 1.45; }
+        .quick-prompt .tag { display: block; margin-bottom: 10px; }
+        .quick-prompt:hover {
+            transform: translateY(-1px);
+            border-color: rgba(115, 219, 196, 0.38);
+            box-shadow: 0 14px 34px rgba(9, 20, 24, 0.3);
+        }
+
+        .toolbar-spacer { flex: 1; }
+
+        .tool-grid {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            align-items: start;
+        }
+
+        .tool-card strong { margin-bottom: 6px; }
+        .tool-card p, .growth-card p, .detail-card p, .summary-card p, .signal-card p { margin: 0; }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 1320px) {
+            .shell { grid-template-columns: 260px minmax(0, 1fr); }
+            .summary-cluster { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .overview-grid, .chat-layout, .activity-layout, .tool-grid { grid-template-columns: 1fr; }
+            .signal-stack { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 920px) {
+            body { overflow: auto; }
+            .shell { grid-template-columns: 1fr; height: auto; }
+            .rail { position: static; height: auto; }
+            .workspace-shell { min-height: auto; height: auto; }
+            .workspace-body { overflow: visible; }
+            .workspace-header, .toolbar, .filter-row, .composer-footer, .action-row { align-items: stretch; }
+            .summary-cluster, .component-grid, .pipeline, .quick-prompts, .signal-stack { grid-template-columns: 1fr; }
+            .bubble { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="shell">
+        <aside class="rail">
+            <div class="brand">
+                <span class="brand-mark">Manifold Runtime</span>
+                <h1>Control Deck</h1>
+                <p>Clear runtime awareness, cleaner chat, and a workspace built around how you actually inspect and steer the system.</p>
+            </div>
+
+            <section class="surface field-stack">
+                <label class="field-label" for="server-url">Server Base URL</label>
+                <input id="server-url" type="text" placeholder="http://127.0.0.1:18790">
+                <div class="action-row">
+                    <button id="reconnect-btn" type="button">Reconnect</button>
+                    <button id="refresh-btn" class="ghost-btn" type="button">Refresh</button>
+                </div>
+                <div class="row">
+                    <div class="status-pill"><span id="connection-dot" class="status-dot"></span><span id="connection-label">Connecting</span></div>
+                    <div class="status-pill"><span id="stream-dot" class="status-dot"></span><span id="stream-label">Stream idle</span></div>
+                </div>
+            </section>
+
+            <nav class="surface nav-list" id="nav-list">
+                <button class="nav-button active" type="button" data-view="overview"><span>Overview</span><small>runtime</small></button>
+                <button class="nav-button" type="button" data-view="chat"><span>Chat</span><small>conversation</small></button>
+                <button class="nav-button" type="button" data-view="activity"><span>Activity</span><small>events</small></button>
+                <button class="nav-button" type="button" data-view="toolkit"><span>Toolkit</span><small>tools + growth</small></button>
+            </nav>
+
+            <section class="surface">
+                <div class="row" style="justify-content:space-between;">
+                    <div><div class="section-kicker">Instant Snapshot</div><strong id="rail-status">Unknown</strong></div>
+                    <button id="toggle-btn" class="danger-btn" type="button">Toggle</button>
+                </div>
+                <div class="mini-list" style="margin-top:12px;">
+                    <div class="mini-item"><span class="stat-label">Active Model</span><strong id="rail-model">-</strong></div>
+                    <div class="mini-item"><span class="stat-label">Requests</span><strong id="rail-requests">0</strong></div>
+                    <div class="mini-item"><span class="stat-label">Tool Calls</span><strong id="rail-tools">0</strong></div>
+                    <div class="mini-item"><span class="stat-label">Errors</span><strong id="rail-errors">0</strong></div>
+                </div>
+            </section>
+
+            <section class="surface">
+                <div class="section-kicker">Useful Shortcuts</div>
+                <div class="mini-list">
+                    <div class="mini-item">
+                        <strong>Enter to Send</strong>
+                        <div class="microcopy">In chat, press <code>Enter</code> to send and <code>Shift+Enter</code> for a new line.</div>
+                    </div>
+                    <div class="mini-item">
+                        <strong>Live Event Filters</strong>
+                        <div class="microcopy">Search by text, type, or component to isolate what the runtime is doing.</div>
+                    </div>
+                    <div class="mini-item">
+                        <strong>Quick Prompt Fill</strong>
+                        <div class="microcopy">Click any prompt card to prefill the composer with a useful starting request.</div>
+                    </div>
+                </div>
+            </section>
+        </aside>
+
+        <main class="workspace-shell">
+            <header class="workspace-header">
+                <div>
+                    <div class="section-kicker" id="view-kicker">Runtime Overview</div>
+                    <h2 id="view-title">Understand the system at a glance.</h2>
+                    <p id="view-description">High-signal status, component flow, recent highlights, and quick entry points.</p>
+                </div>
+                <div class="header-actions">
+                    <div class="status-pill"><span class="detail-label">Enabled</span><strong id="header-enabled">-</strong></div>
+                    <div class="status-pill"><span class="detail-label">Uptime</span><strong id="header-uptime">0s</strong></div>
+                    <div class="field-stack" style="min-width:220px;">
+                        <label class="field-label" for="model-select">Model</label>
+                        <select id="model-select"></select>
+                    </div>
+                </div>
+            </header>
+
+            <div class="workspace-body">
+                <section class="view active" id="view-overview">
+                    <div class="overview-grid">
+                        <div class="view-grid">
+                            <section class="panel-card">
+                                <div class="section-kicker">Mission Readout</div>
+                                <div class="summary-cluster">
+                                    <div class="summary-card">
+                                        <div class="stat-label">Runtime</div>
+                                        <div class="summary-value" id="summary-status">Unknown</div>
+                                        <div class="summary-subtext" id="summary-status-note">Waiting for first snapshot.</div>
+                                    </div>
+                                    <div class="summary-card">
+                                        <div class="stat-label">Active Model</div>
+                                        <div class="summary-value" id="summary-model">-</div>
+                                        <div class="summary-subtext">Current provider target.</div>
+                                    </div>
+                                    <div class="summary-card">
+                                        <div class="stat-label">Tool Calls</div>
+                                        <div class="summary-value" id="summary-tools">0</div>
+                                        <div class="summary-subtext">Successful or failed runtime tool executions.</div>
+                                    </div>
+                                    <div class="summary-card">
+                                        <div class="stat-label">Errors</div>
+                                        <div class="summary-value" id="summary-errors">0</div>
+                                        <div class="summary-subtext">Live failures surfaced to the monitor.</div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="panel-card pipeline-card">
+                                <div class="section-kicker">Cognitive Pipeline</div>
+                                <div class="pipeline">
+                                    <div class="pipeline-step" data-component-step="vector_observer"><strong>Observe</strong><div class="subtext">Vector Observer</div></div>
+                                    <div class="pipeline-step" data-component-step="hippocampus"><strong>Recall</strong><div class="subtext">Hippocampus</div></div>
+                                    <div class="pipeline-step" data-component-step="orchestrator"><strong>Route</strong><div class="subtext">Orchestrator</div></div>
+                                    <div class="pipeline-step" data-component-step="synthesizer"><strong>Synthesize</strong><div class="subtext">Synthesizer</div></div>
+                                </div>
+                                <div class="component-grid" id="component-grid"></div>
+                            </section>
+
+                            <section class="panel-card">
+                                <div class="row" style="justify-content:space-between;">
+                                    <div>
+                                        <div class="section-kicker">Fresh Signals</div>
+                                        <strong>Recent Runtime Highlights</strong>
+                                    </div>
+                                    <button id="open-activity-btn" class="ghost-btn" type="button">Open Activity</button>
+                                </div>
+                                <div class="feed-list" id="overview-feed"><div class="empty-state">No activity yet.</div></div>
+                            </section>
+                        </div>
+
+                        <div class="view-grid">
+                            <section class="panel-card">
+                                <div class="section-kicker">Runtime Signals</div>
+                                <div class="signal-stack">
+                                    <div class="signal-card">
+                                        <div class="signal-label tag">Last Response</div>
+                                        <strong id="signal-response-title">None yet</strong>
+                                        <p class="subtext" id="signal-response-body">The next assistant response will show up here.</p>
+                                    </div>
+                                    <div class="signal-card">
+                                        <div class="signal-label tag">Last Tool Activity</div>
+                                        <strong id="signal-tool-title">No tool calls</strong>
+                                        <p class="subtext" id="signal-tool-body">Useful when the model starts reading files, calling commands, or using forged skills.</p>
+                                    </div>
+                                    <div class="signal-card">
+                                        <div class="signal-label tag">Last Error</div>
+                                        <strong id="signal-error-title">All clear</strong>
+                                        <p class="subtext" id="signal-error-body">Errors are promoted here for quick debugging.</p>
+                                    </div>
+                                    <div class="signal-card">
+                                        <div class="signal-label tag">Growth Signal</div>
+                                        <strong id="signal-growth-title">No growth event yet</strong>
+                                        <p class="subtext" id="signal-growth-body">Genesis, subconscious, and hippocampus activity is surfaced here.</p>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="panel-card">
+                                <div class="section-kicker">Quick Prompts</div>
+                                <div class="quick-prompts" id="quick-prompts"></div>
+                            </section>
+
+                            <section class="panel-card">
+                                <div class="section-kicker">Useful Notes</div>
+                                <div class="note-text" id="overview-note">
+                                    The deck keeps your server URL and active workspace locally in the browser, so reconnecting is faster.
+                                    Live events also feed the summaries automatically, which means the Overview becomes a reliable "what is happening now?" page instead of a static dashboard.
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="view" id="view-chat">
+                    <div class="chat-layout">
+                        <div class="chat-stage">
+                            <section class="panel-card">
+                                <div class="row" style="justify-content:space-between;">
+                                    <div>
+                                        <div class="section-kicker">Conversation Stage</div>
+                                        <strong>Chat with Manifold</strong>
+                                    </div>
+                                    <div class="action-row">
+                                        <button id="chat-autoscroll-btn" class="ghost-btn" type="button">Auto-scroll On</button>
+                                        <button id="clear-chat-btn" class="ghost-btn" type="button">Clear Chat</button>
+                                        <button id="seed-chat-btn" class="ghost-btn" type="button">Load Prompt</button>
+                                    </div>
+                                </div>
+                                <div class="chat-feed" id="chat-feed"></div>
+                            </section>
+
+                            <section class="panel-card">
+                                <div class="section-kicker">Composer</div>
+                                <textarea id="chat-input" placeholder="Ask Manifold something useful. Example: inspect your architecture, summarize recent errors, or use tools to check a local file."></textarea>
+                                <div class="composer-footer">
+                                    <div class="note-text">Press <code>Enter</code> to send. Use <code>Shift+Enter</code> for a new line.</div>
+                                    <div class="action-row">
+                                        <button id="copy-last-btn" class="ghost-btn" type="button">Copy Last Reply</button>
+                                        <button id="send-btn" type="button">Send Message</button>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+
+                        <aside class="chat-side">
+                            <section class="panel-card">
+                                <div class="section-kicker">Conversation Assist</div>
+                                <div class="mini-list" id="chat-suggestion-list"></div>
+                            </section>
+
+                            <section class="panel-card">
+                                <div class="section-kicker">Session Snapshot</div>
+                                <div class="detail-stack">
+                                    <div class="detail-card"><div class="detail-label">Messages in Session</div><div class="detail-value" id="chat-count">0</div></div>
+                                    <div class="detail-card"><div class="detail-label">Last Assistant Reply</div><div class="detail-value" id="chat-last-reply">No reply yet.</div></div>
+                                    <div class="detail-card"><div class="detail-label">Current Tool Inventory</div><div class="detail-value" id="chat-tool-count">0 loaded tools</div></div>
+                                </div>
+                            </section>
+                        </aside>
+                    </div>
+                </section>
+
+                <section class="view" id="view-activity">
+                    <div class="activity-layout">
+                        <div class="activity-main">
+                            <section class="panel-card">
+                                <div class="section-kicker">Live Filters</div>
+                                <div class="filter-row">
+                                    <input id="activity-search" type="text" placeholder="Search messages, components, or payload text...">
+                                    <select id="activity-type-filter">
+                                        <option value="all">All Types</option>
+                                        <option value="request">Request</option>
+                                        <option value="response">Response</option>
+                                        <option value="tool_call">Tool Call</option>
+                                        <option value="tool_result">Tool Result</option>
+                                        <option value="status">Status</option>
+                                        <option value="info">Info</option>
+                                        <option value="error">Error</option>
+                                    </select>
+                                    <select id="activity-component-filter">
+                                        <option value="all">All Components</option>
+                                    </select>
+                                </div>
+                                <div class="toolbar">
+                                    <button id="pause-stream-btn" class="ghost-btn" type="button">Pause List Updates</button>
+                                    <button id="clear-activity-btn" class="ghost-btn" type="button">Clear Local View</button>
+                                    <button id="copy-visible-btn" class="ghost-btn" type="button">Copy Visible Events</button>
+                                    <div class="toolbar-spacer"></div>
+                                    <div class="count-pill"><span class="detail-label">Visible</span><strong id="visible-count">0</strong></div>
+                                    <div class="count-pill"><span class="detail-label">Queued While Paused</span><strong id="paused-queue-count">0</strong></div>
+                                </div>
+                            </section>
+
+                            <section class="panel-card">
+                                <div class="row" style="justify-content:space-between;">
+                                    <div><div class="section-kicker">Event River</div><strong>Filtered Activity</strong></div>
+                                    <div class="count-pill"><span class="detail-label">Total Cached</span><strong id="cached-count">0</strong></div>
+                                </div>
+                                <div class="activity-list" id="activity-list"><div class="empty-state">No events yet.</div></div>
+                            </section>
+                        </div>
+
+                        <aside class="activity-side">
+                            <section class="panel-card">
+                                <div class="section-kicker">Inspector</div>
+                                <div class="detail-stack" id="event-inspector">
+                                    <div class="detail-card">
+                                        <div class="detail-label">Selected Event</div>
+                                        <div class="detail-value">Click an event to inspect its details here.</div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="panel-card">
+                                <div class="section-kicker">Type Breakdown</div>
+                                <div class="detail-stack" id="type-breakdown"></div>
+                            </section>
+                        </aside>
+                    </div>
+                </section>
+
+                <section class="view" id="view-toolkit">
+                    <div class="tool-grid">
+                        <div class="tool-column">
+                            <section class="panel-card">
+                                <div class="row" style="justify-content:space-between;">
+                                    <div>
+                                        <div class="section-kicker">Tool Surface</div>
+                                        <strong>Available Tools</strong>
+                                    </div>
+                                    <div class="count-pill"><span class="detail-label">Loaded</span><strong id="tool-count">0</strong></div>
+                                </div>
+                                <div class="toolbar">
+                                    <input id="tool-domain-input" type="text" placeholder="general">
+                                    <button id="tool-domain-btn" type="button">Load Domain</button>
+                                </div>
+                                <div class="tool-list" id="tool-list"><div class="empty-state">No tools loaded yet.</div></div>
+                            </section>
+
+                            <section class="panel-card">
+                                <div class="section-kicker">Diagnostics</div>
+                                <div class="detail-stack">
+                                    <div class="detail-card"><div class="detail-label">Current Domain Query</div><div class="detail-value" id="tool-domain-label">general</div></div>
+                                    <div class="detail-card"><div class="detail-label">Monitor URL</div><div class="detail-value" id="monitor-url-label">/</div></div>
+                                    <div class="detail-card"><div class="detail-label">Connection Note</div><div class="detail-value" id="toolkit-connection-note">Waiting for first refresh.</div></div>
+                                </div>
+                            </section>
+                        </div>
+
+                        <div class="tool-column">
+                            <section class="panel-card">
+                                <div class="row" style="justify-content:space-between;">
+                                    <div>
+                                        <div class="section-kicker">Growth Ledger</div>
+                                        <strong>Genesis, Memory, and Subconscious Events</strong>
+                                    </div>
+                                    <button id="open-growth-source-btn" class="ghost-btn" type="button">Focus Overview</button>
+                                </div>
+                                <div class="growth-list" id="growth-list"><div class="empty-state">No growth-related activity captured yet.</div></div>
+                            </section>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    <script>
+        const STORAGE_KEYS = {
+            serverUrl: "manifold.serverUrl",
+            activeView: "manifold.activeView",
+            toolDomain: "manifold.toolDomain",
+            chatDraft: "manifold.chatDraft",
+            chatHistory: "manifold.chatHistory",
+            lastAssistantReply: "manifold.lastAssistantReply",
+            chatAutoScroll: "manifold.chatAutoScroll"
+        };
+
+        const VIEW_META = {
+            overview: {
+                kicker: "Runtime Overview",
+                title: "Understand the system at a glance.",
+                description: "High-signal status, component flow, recent highlights, and quick entry points."
+            },
+            chat: {
+                kicker: "Chat Workspace",
+                title: "Talk to Manifold without losing the runtime context.",
+                description: "A cleaner conversation stage, faster prompt starts, and relevant session context on the side."
+            },
+            activity: {
+                kicker: "Event Inspector",
+                title: "Trace what happened, then narrow it fast.",
+                description: "Filter by type, component, or text, pause list updates, and inspect payloads without visual overload."
+            },
+            toolkit: {
+                kicker: "Tools and Growth",
+                title: "Inspect callable capabilities and long-running system evolution.",
+                description: "Swap tool domains, review growth events, and keep diagnostics close to the inventory."
+            }
+        };
+
+        const COMPONENTS = [
+            { id: "vector_observer", label: "Vector Observer" },
+            { id: "hippocampus", label: "Hippocampus" },
+            { id: "orchestrator", label: "Orchestrator" },
+            { id: "synthesizer", label: "Synthesizer" },
+            { id: "genesis_node", label: "Genesis Node" },
+            { id: "subconscious", label: "Subconscious" },
+            { id: "hyperparameters", label: "Hyperparameters" }
+        ];
+
+        const QUICK_PROMPTS = [
+            "Summarize your architecture and explain what each active component is doing right now.",
+            "Review the most recent errors and tell me the likely cause in plain language.",
+            "Use the available tools to inspect VERSION.txt and tell me what build is running.",
+            "List the current tools and explain which ones are built-in versus forged skills."
+        ];
+
+        const CHAT_SUGGESTIONS = [
+            "Inspect the current runtime state before answering.",
+            "Summarize the latest activity feed into a short operational report.",
+            "Use tools if local files or shell output would make the answer more reliable.",
+            "Explain the latest growth-related events and whether they matter."
+        ];
+
+        const state = {
+            activeView: "overview",
+            eventSource: null,
+            reconnectTimer: null,
+            pausedListUpdates: false,
+            queuedWhilePaused: 0,
+            events: [],
+            eventKeys: new Set(),
+            selectedEventKey: null,
+            status: null,
+            componentStatus: {},
+            toolPayload: { tools: [] },
+            chatHistory: [],
+            lastAssistantReply: "",
+            toolDomain: "general",
+            chatAutoScroll: true,
+            isLoadingHistory: false
+        };
+
+        function playNotificationSound() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                // Soft, gentle bell tone (D5)
+                osc.type = 'sine';
+                osc.frequency.value = 587.33;
+                
+                // Smooth envelope: quick fade in, gentle fade out
+                gain.gain.setValueAtTime(0, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.65);
+            } catch (error) {
+                console.warn("Audio playback failed", error);
+            }
+        }
+
+        function defaultBaseUrl() {
+            if (window.location.origin && window.location.origin.startsWith("http")) {
+                return window.location.origin.replace(/\/+$/, "");
+            }
+            return "http://127.0.0.1:18790";
+        }
+
+        function getBaseUrl() {
+            return (document.getElementById("server-url").value.trim() || defaultBaseUrl()).replace(/\/+$/, "");
+        }
+
+        function getRequestedView() {
+            const hashView = window.location.hash.replace(/^#/, "");
+            return VIEW_META[hashView] ? hashView : null;
+        }
+
+        function savePref(key, value) {
+            localStorage.setItem(key, value);
+        }
+
+        function loadPref(key, fallback = "") {
+            return localStorage.getItem(key) || fallback;
+        }
+
+        function persistChat() {
+            savePref(STORAGE_KEYS.chatHistory, JSON.stringify(state.chatHistory.slice(-40)));
+            savePref(STORAGE_KEYS.lastAssistantReply, state.lastAssistantReply || "");
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement("div");
+            div.textContent = text ?? "";
+            return div.innerHTML;
+        }
+
+        function renderMessage(text) {
+            return String(text || "").split("```").map((part, index) => {
+                if (index % 2 === 1) {
+                    const normalized = part.replace(/^[a-zA-Z0-9_-]+\n/, "");
+                    return `<pre><code>${escapeHtml(normalized.trim())}</code></pre>`;
+                }
+                return escapeHtml(part)
+                    .replace(/`([^`]+)`/g, "<code>$1</code>")
+                    .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noreferrer">$1</a>')
+                    .replace(/\n/g, "<br>");
+            }).join("");
+        }
+
+        function eventKey(entry) {
+            return String(entry.id ?? `${entry.timestamp || ""}:${entry.component || ""}:${entry.type || ""}:${entry.message || ""}`);
+        }
+
+        function summarizeData(data) {
+            if (!data) return "";
+            const text = JSON.stringify(data, null, 2);
+            return text.length > 500 ? text.slice(0, 497) + "..." : text;
+        }
+
+        function formatTimestamp(value) {
+            if (!value) return "";
+            const date = new Date(value);
+            return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
+        }
+
+        function formatDuration(totalSeconds) {
+            const seconds = Math.max(0, Number(totalSeconds) || 0);
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            if (hours > 0) return `${hours}h ${minutes}m`;
+            if (minutes > 0) return `${minutes}m ${secs}s`;
+            return `${secs}s`;
+        }
+
+        async function fetchJson(path, options = {}) {
+            const response = await fetch(getBaseUrl() + path, options);
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(`${response.status} ${response.statusText}: ${text.slice(0, 240)}`);
+            }
+            return response.json();
+        }
+
+        function setConnectionState(target, online, label) {
+            document.getElementById(`${target}-dot`).className = `status-dot ${online ? "online" : "offline"}`;
+            document.getElementById(`${target}-label`).textContent = label;
+        }
+
+        function switchView(viewId) {
+            state.activeView = viewId;
+            savePref(STORAGE_KEYS.activeView, viewId);
+            if (window.location.hash !== `#${viewId}`) {
+                history.replaceState(null, "", `${window.location.pathname}${window.location.search}#${viewId}`);
+            }
+            document.querySelectorAll(".nav-button").forEach((button) => {
+                button.classList.toggle("active", button.dataset.view === viewId);
+            });
+            document.querySelectorAll(".view").forEach((view) => {
+                view.classList.toggle("active", view.id === `view-${viewId}`);
+            });
+            const meta = VIEW_META[viewId];
+            document.getElementById("view-kicker").textContent = meta.kicker;
+            document.getElementById("view-title").textContent = meta.title;
+            document.getElementById("view-description").textContent = meta.description;
+        }
+
+        function fillPrompt(text, switchToChat = true) {
+            document.getElementById("chat-input").value = text;
+            savePref(STORAGE_KEYS.chatDraft, text);
+            if (switchToChat) switchView("chat");
+            document.getElementById("chat-input").focus();
+        }
+
+        function copyText(text, notice = "Copied") {
+            navigator.clipboard.writeText(text).then(() => {
+                document.getElementById("toolkit-connection-note").textContent = notice;
+            }).catch(() => {
+                document.getElementById("toolkit-connection-note").textContent = "Clipboard access failed.";
+            });
+        }
+
+        function scrollChatToBottom(force = false) {
+            const feed = document.getElementById("chat-feed");
+            if (!feed) return;
+            const nearBottom = feed.scrollHeight - feed.clientHeight - feed.scrollTop < 90;
+            if (!force && !(state.chatAutoScroll || nearBottom)) return;
+            requestAnimationFrame(() => {
+                feed.scrollTop = feed.scrollHeight;
+            });
+        }
+
+        function updateAutoscrollButton() {
+            const button = document.getElementById("chat-autoscroll-btn");
+            button.textContent = state.chatAutoScroll ? "Auto-scroll On" : "Auto-scroll Off";
+            button.className = state.chatAutoScroll ? "ghost-btn" : "danger-btn";
+            document.getElementById("chat-feed").dataset.autoscroll = state.chatAutoScroll ? "on" : "off";
+        }
+
+        function restoreStoredChat() {
+            const feed = document.getElementById("chat-feed");
+            feed.innerHTML = "";
+            state.chatHistory = [];
+            state.lastAssistantReply = loadPref(STORAGE_KEYS.lastAssistantReply, "");
+
+            try {
+                const raw = loadPref(STORAGE_KEYS.chatHistory, "[]");
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) {
+                    parsed.slice(-40).forEach((message) => {
+                        if (!message || !message.role || !message.content) return;
+                        state.chatHistory.push({ role: message.role, content: message.content });
+                        addChatBubble(message.role, message.content);
+                    });
+                }
+            } catch (error) {
+                console.warn("Failed to restore chat history", error);
+            }
+
+            if (!state.chatHistory.length) {
+                addChatBubble("assistant", "Welcome back. Ask Manifold anything when you are ready.");
+            }
+
+            updateChatSidebar();
+            updateAutoscrollButton();
+            scrollChatToBottom(true);
+        }
+
+        function renderQuickPrompts() {
+            const prompts = document.getElementById("quick-prompts");
+            prompts.innerHTML = "";
+            QUICK_PROMPTS.forEach((prompt) => {
+                const card = document.createElement("button");
+                card.type = "button";
+                card.className = "quick-prompt";
+                card.innerHTML = `<div class="tag">Prompt</div><strong>${escapeHtml(prompt)}</strong>`;
+                card.addEventListener("click", () => fillPrompt(prompt));
+                prompts.appendChild(card);
+            });
+
+            const suggestionList = document.getElementById("chat-suggestion-list");
+            suggestionList.innerHTML = "";
+            CHAT_SUGGESTIONS.forEach((prompt) => {
+                const item = document.createElement("button");
+                item.type = "button";
+                item.className = "quick-prompt";
+                item.innerHTML = `<div class="tag">Starter</div><strong>${escapeHtml(prompt)}</strong>`;
+                item.addEventListener("click", () => fillPrompt(prompt, false));
+                suggestionList.appendChild(item);
+            });
+        }
+
+        function renderComponentGrid() {
+            const container = document.getElementById("component-grid");
+            container.innerHTML = "";
+            COMPONENTS.forEach((component) => {
+                const active = state.componentStatus[component.id] === "active";
+                const tile = document.createElement("div");
+                tile.className = `component-tile${active ? " active" : ""}`;
+                tile.innerHTML = `
+                    <div class="tag">${escapeHtml(component.id)}</div>
+                    <strong>${escapeHtml(component.label)}</strong>
+                    <div class="subtext">${active ? "Currently active in the runtime." : "Currently idle."}</div>
+                `;
+                container.appendChild(tile);
+            });
+
+            document.querySelectorAll("[data-component-step]").forEach((step) => {
+                step.classList.toggle("active", state.componentStatus[step.dataset.componentStep] === "active");
+            });
+        }
+
+        function isGrowthEvent(entry) {
+            const message = (entry.message || "").toLowerCase();
+            return (
+                entry.component === "genesis_node" ||
+                entry.component === "subconscious" ||
+                entry.component === "hippocampus" ||
+                message.includes("capability forged") ||
+                message.includes("consolidated") ||
+                message.includes("insight")
+            );
+        }
+
+        function getLatestEvent(predicate) {
+            return state.events.find(predicate) || null;
+        }
+
+        function updateSignals() {
+            const responseEvent = getLatestEvent((event) => event.type === "response");
+            const toolEvent = getLatestEvent((event) => event.type === "tool_call" || event.type === "tool_result");
+            const errorEvent = getLatestEvent((event) => event.type === "error");
+            const growthEvent = getLatestEvent((event) => isGrowthEvent(event));
+
+            document.getElementById("signal-response-title").textContent = responseEvent ? (responseEvent.component || "assistant") : "None yet";
+            document.getElementById("signal-response-body").textContent = responseEvent ? (responseEvent.message || "Response logged.") : "The next assistant response will show up here.";
+            document.getElementById("signal-tool-title").textContent = toolEvent ? (toolEvent.component || "runtime") : "No tool calls";
+            document.getElementById("signal-tool-body").textContent = toolEvent ? (toolEvent.message || "Tool activity logged.") : "Useful when the model starts reading files, calling commands, or using forged skills.";
+            document.getElementById("signal-error-title").textContent = errorEvent ? (errorEvent.component || "runtime") : "All clear";
+            document.getElementById("signal-error-body").textContent = errorEvent ? (errorEvent.message || "Error logged.") : "Errors are promoted here for quick debugging.";
+            document.getElementById("signal-growth-title").textContent = growthEvent ? (growthEvent.component || "growth") : "No growth event yet";
+            document.getElementById("signal-growth-body").textContent = growthEvent ? (growthEvent.message || "Growth event logged.") : "Genesis, subconscious, and hippocampus activity is surfaced here.";
+        }
+
+        function renderOverviewFeed() {
+            const feed = document.getElementById("overview-feed");
+            const recent = state.events.slice(0, 6);
+            if (!recent.length) {
+                feed.innerHTML = '<div class="empty-state">No activity yet.</div>';
+                return;
+            }
+
+            feed.innerHTML = "";
+            recent.forEach((event) => {
+                const item = document.createElement("div");
+                item.className = "mini-item";
+                item.innerHTML = `
+                    <div class="row" style="justify-content:space-between;">
+                        <span class="tag">${escapeHtml(event.type || "info")}</span>
+                        <span class="tool-meta">${escapeHtml(formatTimestamp(event.timestamp))}</span>
+                    </div>
+                    <strong>${escapeHtml(event.component || "system")}</strong>
+                    <div class="microcopy">${escapeHtml(event.message || "")}</div>
+                `;
+                feed.appendChild(item);
+            });
+        }
+
+        function renderGrowthList() {
+            const list = document.getElementById("growth-list");
+            const growth = state.events.filter(isGrowthEvent).slice(0, 16);
+            if (!growth.length) {
+                list.innerHTML = '<div class="empty-state">No growth-related activity captured yet.</div>';
+                return;
+            }
+            list.innerHTML = "";
+            growth.forEach((event) => {
+                const item = document.createElement("div");
+                item.className = "growth-card";
+                item.innerHTML = `
+                    <div class="activity-meta"><span class="event-pill">${escapeHtml(event.component || "growth")}</span><span>${escapeHtml(formatTimestamp(event.timestamp))}</span></div>
+                    <strong>${escapeHtml(event.message || "")}</strong>
+                    ${event.data ? `<div class="activity-data">${escapeHtml(summarizeData(event.data))}</div>` : ""}
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function renderActivityFilterOptions() {
+            const select = document.getElementById("activity-component-filter");
+            const current = select.value;
+            const components = new Set(COMPONENTS.map((component) => component.id));
+            state.events.forEach((event) => event.component && components.add(event.component));
+            select.innerHTML = '<option value="all">All Components</option>';
+            [...components].sort().forEach((componentId) => {
+                const option = document.createElement("option");
+                option.value = componentId;
+                option.textContent = componentId;
+                select.appendChild(option);
+            });
+            select.value = [...select.options].some((option) => option.value === current) ? current : "all";
+        }
+
+        function getFilteredEvents() {
+            const query = document.getElementById("activity-search").value.trim().toLowerCase();
+            const type = document.getElementById("activity-type-filter").value;
+            const component = document.getElementById("activity-component-filter").value;
+
+            return state.events.filter((event) => {
+                if (type !== "all" && (event.type || "") !== type) return false;
+                if (component !== "all" && (event.component || "") !== component) return false;
+                if (!query) return true;
+                const haystack = `${event.type || ""} ${event.component || ""} ${event.message || ""} ${JSON.stringify(event.data || {})}`.toLowerCase();
+                return haystack.includes(query);
+            });
+        }
+
+        function copyVisibleActivity() {
+            const filtered = getFilteredEvents();
+            if (!filtered.length) {
+                document.getElementById("toolkit-connection-note").textContent = "There are no visible events to copy.";
+                return;
+            }
+
+            const payload = filtered.map((event) => ({
+                timestamp: event.timestamp || null,
+                type: event.type || "info",
+                component: event.component || "system",
+                message: event.message || "",
+                data: event.data ?? null
+            }));
+
+            copyText(JSON.stringify(payload, null, 2), `Copied ${payload.length} visible events.`);
+        }
+
+        function renderEventInspector(selected) {
+            const container = document.getElementById("event-inspector");
+            if (!selected) {
+                container.innerHTML = '<div class="detail-card"><div class="detail-label">Selected Event</div><div class="detail-value">Click an event to inspect its details here.</div></div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="detail-card"><div class="detail-label">Type</div><div class="detail-value">${escapeHtml(selected.type || "info")}</div></div>
+                <div class="detail-card"><div class="detail-label">Component</div><div class="detail-value">${escapeHtml(selected.component || "system")}</div></div>
+                <div class="detail-card"><div class="detail-label">Timestamp</div><div class="detail-value">${escapeHtml(formatTimestamp(selected.timestamp))}</div></div>
+                <div class="detail-card"><div class="detail-label">Message</div><div class="detail-value">${escapeHtml(selected.message || "")}</div></div>
+                <div class="detail-card"><div class="detail-label">Payload</div><div class="detail-value">${selected.data ? `<div class="activity-data">${escapeHtml(JSON.stringify(selected.data, null, 2))}</div>` : "No structured payload."}</div></div>
+            `;
+        }
+
+        function renderTypeBreakdown(filtered) {
+            const counts = {};
+            filtered.forEach((event) => {
+                counts[event.type || "info"] = (counts[event.type || "info"] || 0) + 1;
+            });
+            const container = document.getElementById("type-breakdown");
+            const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+            if (!entries.length) {
+                container.innerHTML = '<div class="detail-card"><div class="detail-value">No events in the current filter.</div></div>';
+                return;
+            }
+            container.innerHTML = "";
+            entries.forEach(([type, count]) => {
+                const card = document.createElement("div");
+                card.className = "detail-card";
+                card.innerHTML = `<div class="detail-label">${escapeHtml(type)}</div><div class="detail-value">${count}</div>`;
+                container.appendChild(card);
+            });
+        }
+
+        function renderActivityList(force = false) {
+            if (state.pausedListUpdates && !force) return;
+            const filtered = getFilteredEvents();
+            const list = document.getElementById("activity-list");
+            document.getElementById("visible-count").textContent = String(filtered.length);
+            document.getElementById("cached-count").textContent = String(state.events.length);
+            document.getElementById("paused-queue-count").textContent = String(state.queuedWhilePaused);
+
+            if (!filtered.length) {
+                list.innerHTML = '<div class="empty-state">No events match the current filters.</div>';
+                renderEventInspector(null);
+                renderTypeBreakdown([]);
+                return;
+            }
+
+            if (!state.selectedEventKey || !filtered.some((event) => eventKey(event) === state.selectedEventKey)) {
+                state.selectedEventKey = eventKey(filtered[0]);
+            }
+
+            list.innerHTML = "";
+            filtered.slice(0, 160).forEach((event) => {
+                const key = eventKey(event);
+                const item = document.createElement("button");
+                item.type = "button";
+                item.className = `activity-item${state.selectedEventKey === key ? " selected" : ""}`;
+                item.innerHTML = `
+                    <div class="activity-meta"><span class="event-pill">${escapeHtml(event.type || "info")}</span><span>${escapeHtml(event.component || "system")}</span><span>${escapeHtml(formatTimestamp(event.timestamp))}</span></div>
+                    <div class="activity-title">${escapeHtml(event.message || "")}</div>
+                    ${event.data ? `<div class="activity-data">${escapeHtml(summarizeData(event.data))}</div>` : ""}
+                `;
+                item.addEventListener("click", () => {
+                    state.selectedEventKey = key;
+                    renderActivityList(true);
+                });
+                list.appendChild(item);
+            });
+
+            renderEventInspector(filtered.find((event) => eventKey(event) === state.selectedEventKey));
+            renderTypeBreakdown(filtered);
+            state.queuedWhilePaused = 0;
+            document.getElementById("paused-queue-count").textContent = "0";
+        }
+
+        function addChatBubble(role, content) {
+            const feed = document.getElementById("chat-feed");
+            const bubble = document.createElement("div");
+            bubble.className = `bubble ${role}`;
+            const isAssistant = role === "assistant";
+            bubble.innerHTML = `
+                <div class="bubble-header">
+                    <div class="bubble-meta">${isAssistant ? "Manifold" : "You"}</div>
+                    ${isAssistant ? '<button class="ghost-btn bubble-copy-btn" type="button">Copy</button>' : ""}
+                </div>
+                <div class="bubble-content">${renderMessage(content)}</div>
+            `;
+            if (isAssistant) {
+                bubble.querySelector(".bubble-copy-btn").addEventListener("click", () => copyText(content, "Assistant reply copied."));
+            }
+            feed.appendChild(bubble);
+            scrollChatToBottom();
+            return bubble;
+        }
+
+        function updateChatSidebar() {
+            document.getElementById("chat-count").textContent = String(state.chatHistory.length);
+            document.getElementById("chat-last-reply").textContent = state.lastAssistantReply || "No reply yet.";
+            document.getElementById("chat-tool-count").textContent = `${(state.toolPayload.tools || []).length} loaded tools`;
+            persistChat();
+        }
+
+        function clearChat(showNotice = true) {
+            state.chatHistory = [];
+            state.lastAssistantReply = "";
+            document.getElementById("chat-feed").innerHTML = "";
+            persistChat();
+            if (showNotice) {
+                addChatBubble("assistant", "Chat reset. Ask Manifold anything when you are ready.");
+            }
+            updateChatSidebar();
+        }
+
+        function updateStatus(status) {
+            state.status = status;
+            document.getElementById("header-enabled").textContent = status.enabled ? "Yes" : "No";
+            document.getElementById("header-uptime").textContent = formatDuration(status.uptime_seconds || 0);
+            document.getElementById("rail-status").textContent = status.status || "Unknown";
+            document.getElementById("rail-model").textContent = status.model || "-";
+            document.getElementById("rail-requests").textContent = String(status.total_requests ?? 0);
+            document.getElementById("rail-tools").textContent = String(status.total_tool_calls ?? 0);
+            document.getElementById("rail-errors").textContent = String(status.total_errors ?? 0);
+            document.getElementById("summary-status").textContent = status.status || "Unknown";
+            document.getElementById("summary-status-note").textContent = status.enabled ? "Manifold is accepting chat requests." : "Manifold is disabled right now.";
+            document.getElementById("summary-model").textContent = status.model || "-";
+            document.getElementById("summary-tools").textContent = String(status.total_tool_calls ?? 0);
+            document.getElementById("summary-errors").textContent = String(status.total_errors ?? 0);
+
+            const toggle = document.getElementById("toggle-btn");
+            toggle.textContent = status.enabled ? "Disable" : "Enable";
+            toggle.className = status.enabled ? "danger-btn" : "ghost-btn";
+        }
+
+        function updateToolPayload(payload) {
+            state.toolPayload = payload;
+            document.getElementById("tool-count").textContent = String((payload.tools || []).length);
+            document.getElementById("chat-tool-count").textContent = `${(payload.tools || []).length} loaded tools`;
+            document.getElementById("tool-domain-label").textContent = state.toolDomain;
+
+            const list = document.getElementById("tool-list");
+            if (!(payload.tools || []).length) {
+                list.innerHTML = '<div class="empty-state">No tools available for the selected domain.</div>';
+                return;
+            }
+
+            list.innerHTML = "";
+            (payload.tools || []).forEach((tool) => {
+                const fn = tool.function || {};
+                const item = document.createElement("div");
+                item.className = "tool-card";
+                item.innerHTML = `
+                    <div class="tool-meta">${escapeHtml(fn.name || "unnamed_tool")}</div>
+                    <strong>${escapeHtml(fn.description || "No description provided.")}</strong>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function ingestEvent(event) {
+            const key = eventKey(event);
+            if (state.eventKeys.has(key)) return;
+            state.eventKeys.add(key);
+            state.events.unshift(event);
+
+            if (event.type === "response" && !state.isLoadingHistory) {
+                playNotificationSound();
+            }
+
+            if (event.type === "status" && event.component) {
+                state.componentStatus[event.component] = /active/i.test(event.message || "") ? "active" : "idle";
+                renderComponentGrid();
+            }
+
+            updateSignals();
+            renderOverviewFeed();
+            renderGrowthList();
+            renderActivityFilterOptions();
+
+            if (state.pausedListUpdates) {
+                state.queuedWhilePaused += 1;
+                document.getElementById("paused-queue-count").textContent = String(state.queuedWhilePaused);
+            } else {
+                renderActivityList();
+            }
+        }
+
+        function clearActivityCache() {
+            state.events = [];
+            state.eventKeys = new Set();
+            state.selectedEventKey = null;
+            state.queuedWhilePaused = 0;
+            renderOverviewFeed();
+            renderGrowthList();
+            renderActivityFilterOptions();
+            renderActivityList(true);
+            updateSignals();
+        }
+
+        async function loadModels() {
+            const payload = await fetchJson("/models");
+            const select = document.getElementById("model-select");
+            select.innerHTML = "";
+            (payload.models || []).forEach((model) => {
+                const option = document.createElement("option");
+                option.value = model;
+                option.textContent = model;
+                if (model === payload.active) option.selected = true;
+                select.appendChild(option);
+            });
+        }
+
+        async function loadTools(domain = state.toolDomain) {
+            state.toolDomain = domain.trim() || "general";
+            savePref(STORAGE_KEYS.toolDomain, state.toolDomain);
+            document.getElementById("tool-domain-input").value = state.toolDomain;
+            const payload = await fetchJson(`/tools?domain=${encodeURIComponent(state.toolDomain)}`);
+            updateToolPayload(payload);
+        }
+
+        async function refreshSnapshot() {
+            const [status, components] = await Promise.all([
+                fetchJson("/status"),
+                fetchJson("/components")
+            ]);
+            state.componentStatus = components;
+            updateStatus(status);
+            renderComponentGrid();
+            setConnectionState("connection", true, "Connected");
+            document.getElementById("toolkit-connection-note").textContent = `Last refresh succeeded at ${new Date().toLocaleTimeString()}.`;
+        }
+
+        async function loadActivity() {
+            state.isLoadingHistory = true;
+            const payload = await fetchJson("/activity?limit=120");
+            clearActivityCache();
+            (payload.events || []).slice().reverse().forEach((event) => ingestEvent(event));
+            state.isLoadingHistory = false;
+        }
+
+        function connectStream() {
+            if (state.eventSource) state.eventSource.close();
+            if (state.reconnectTimer) clearTimeout(state.reconnectTimer);
+
+            state.eventSource = new EventSource(getBaseUrl() + "/events");
+            state.eventSource.onopen = () => setConnectionState("stream", true, "Streaming");
+            state.eventSource.onmessage = (event) => {
+                try {
+                    const payload = JSON.parse(event.data);
+                    if (payload.type === "connected") return;
+                    ingestEvent(payload);
+                } catch (error) {
+                    console.error(error);
+                }
+            };
+            state.eventSource.onerror = () => {
+                setConnectionState("stream", false, "Reconnecting");
+                if (state.eventSource) state.eventSource.close();
+                state.reconnectTimer = setTimeout(connectStream, 3000);
+            };
+        }
+
+        async function reconnectAll() {
+            setConnectionState("connection", false, "Refreshing");
+            setConnectionState("stream", false, "Connecting");
+            savePref(STORAGE_KEYS.serverUrl, document.getElementById("server-url").value.trim());
+            await Promise.all([refreshSnapshot(), loadModels(), loadTools(state.toolDomain), loadActivity()]);
+            connectStream();
+        }
+
+        async function sendChat() {
+            const input = document.getElementById("chat-input");
+            const sendButton = document.getElementById("send-btn");
+            const message = input.value.trim();
+            if (!message) return;
+
+            input.value = "";
+            savePref(STORAGE_KEYS.chatDraft, "");
+            addChatBubble("user", message);
+            state.chatHistory.push({ role: "user", content: message });
+            updateChatSidebar();
+
+            const thinking = addChatBubble("assistant", "Thinking...");
+            sendButton.disabled = true;
+            try {
+                const payload = await fetchJson("/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ messages: state.chatHistory })
+                });
+                thinking.remove();
+                const content = payload.content || payload.error || JSON.stringify(payload);
+                addChatBubble("assistant", content);
+                playNotificationSound();
+                state.chatHistory.push({ role: "assistant", content });
+                state.lastAssistantReply = content;
+                updateChatSidebar();
+                await refreshSnapshot();
+            } catch (error) {
+                thinking.remove();
+                addChatBubble("assistant", `Error: ${error.message}`);
+            } finally {
+                sendButton.disabled = false;
+                input.focus();
+            }
+        }
+
+        async function setModel(model) {
+            await fetchJson("/model", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ model })
+            });
+            await reconnectAll();
+        }
+
+        async function toggleEnabled() {
+            await fetchJson("/onoff/toggle", { method: "POST" });
+            await refreshSnapshot();
+        }
+
+        function restorePreferences() {
+            document.getElementById("server-url").value = loadPref(STORAGE_KEYS.serverUrl, defaultBaseUrl());
+            state.toolDomain = loadPref(STORAGE_KEYS.toolDomain, "general");
+            state.chatAutoScroll = loadPref(STORAGE_KEYS.chatAutoScroll, "on") !== "off";
+            document.getElementById("tool-domain-input").value = state.toolDomain;
+            document.getElementById("chat-input").value = loadPref(STORAGE_KEYS.chatDraft, "");
+            switchView(getRequestedView() || loadPref(STORAGE_KEYS.activeView, "overview"));
+            document.getElementById("monitor-url-label").textContent = `${getBaseUrl()}/`;
+        }
+
+        async function bootstrap() {
+            restorePreferences();
+            document.getElementById("overview-note").textContent = "The deck keeps your server URL and active workspace locally in the browser, so reconnecting is faster. Live events also feed the summaries automatically, which means the Overview becomes a reliable \"what is happening now?\" page instead of a static dashboard.";
+            renderQuickPrompts();
+            renderComponentGrid();
+            restoreStoredChat();
+            try {
+                await reconnectAll();
+            } catch (error) {
+                setConnectionState("connection", false, "Offline");
+                setConnectionState("stream", false, "Stream offline");
+                document.getElementById("toolkit-connection-note").textContent = `Startup failed: ${error.message}`;
+            }
+        }
+
+        document.querySelectorAll(".nav-button").forEach((button) => {
+            button.addEventListener("click", () => switchView(button.dataset.view));
+        });
+        document.getElementById("reconnect-btn").addEventListener("click", reconnectAll);
+        document.getElementById("refresh-btn").addEventListener("click", reconnectAll);
+        document.getElementById("toggle-btn").addEventListener("click", toggleEnabled);
+        document.getElementById("open-activity-btn").addEventListener("click", () => switchView("activity"));
+        document.getElementById("open-growth-source-btn").addEventListener("click", () => switchView("overview"));
+        document.getElementById("model-select").addEventListener("change", (event) => setModel(event.target.value));
+        document.getElementById("tool-domain-btn").addEventListener("click", () => loadTools(document.getElementById("tool-domain-input").value));
+        document.getElementById("activity-search").addEventListener("input", () => renderActivityList(true));
+        document.getElementById("activity-type-filter").addEventListener("change", () => renderActivityList(true));
+        document.getElementById("activity-component-filter").addEventListener("change", () => renderActivityList(true));
+        document.getElementById("pause-stream-btn").addEventListener("click", () => {
+            state.pausedListUpdates = !state.pausedListUpdates;
+            document.getElementById("pause-stream-btn").textContent = state.pausedListUpdates ? "Resume List Updates" : "Pause List Updates";
+            if (!state.pausedListUpdates) renderActivityList(true);
+        });
+        document.getElementById("clear-activity-btn").addEventListener("click", clearActivityCache);
+        document.getElementById("copy-visible-btn").addEventListener("click", copyVisibleActivity);
+        document.getElementById("send-btn").addEventListener("click", sendChat);
+        document.getElementById("chat-autoscroll-btn").addEventListener("click", () => {
+            state.chatAutoScroll = !state.chatAutoScroll;
+            savePref(STORAGE_KEYS.chatAutoScroll, state.chatAutoScroll ? "on" : "off");
+            updateAutoscrollButton();
+            if (state.chatAutoScroll) scrollChatToBottom(true);
+        });
+        document.getElementById("seed-chat-btn").addEventListener("click", () => fillPrompt(QUICK_PROMPTS[0]));
+        document.getElementById("clear-chat-btn").addEventListener("click", clearChat);
+        document.getElementById("copy-last-btn").addEventListener("click", () => {
+            if (state.lastAssistantReply) copyText(state.lastAssistantReply, "Last assistant reply copied.");
+        });
+        document.getElementById("chat-input").addEventListener("input", (event) => savePref(STORAGE_KEYS.chatDraft, event.target.value));
+        document.getElementById("server-url").addEventListener("change", (event) => {
+            savePref(STORAGE_KEYS.serverUrl, event.target.value.trim());
+            document.getElementById("monitor-url-label").textContent = `${getBaseUrl()}/`;
+        });
+        document.getElementById("chat-input").addEventListener("keydown", (event) => {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                if (!document.getElementById("send-btn").disabled) sendChat();
+            }
+        });
+        window.addEventListener("hashchange", () => {
+            const requested = getRequestedView();
+            if (requested && requested !== state.activeView) switchView(requested);
+        });
+        window.addEventListener("beforeunload", () => {
+            if (state.eventSource) state.eventSource.close();
+        });
+
+        bootstrap();
+    </script>
+</body>
+</html>

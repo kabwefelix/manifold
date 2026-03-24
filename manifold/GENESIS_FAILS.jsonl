@@ -1,0 +1,4 @@
+{"ts": "2026-03-23T08:51:41Z", "domain": "web", "intent": "Does Google have an \"Antigravity\" project or API? What is it? Provide details about any official Google antigravity-related APIs, projects, or products.", "reason": "connection_error", "details": ""}
+{"ts": "2026-03-23T08:53:47Z", "domain": "web", "intent": "Does Google have an \"Antigravity\" project or API? What is it? Provide details about any official Google antigravity-related APIs, projects, or products.", "reason": "sandbox_failed", "details": "Security Violation: Import of non-allowlisted module 'Dict' detected."}
+{"ts": "2026-03-23T22:13:15Z", "domain": "web", "intent": "can you browse the web", "reason": "connection_error", "details": ""}
+{"ts": "2026-03-24T06:11:45Z", "domain": "validation", "intent": "Write a validation script to definitively find the true value of: success of playing the song", "reason": "connection_error", "details": ""}

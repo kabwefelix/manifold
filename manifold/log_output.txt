@@ -1,0 +1,84 @@
+[2026-03-24T13:43:47.254764] STATUS (synthesizer): synthesizer → idle
+    Data: {}
+[2026-03-24T13:43:47.264894] RESPONSE (synthesizer): Final response generated
+    Data: {'preview': "I understand you'd like to listen to an hour or more of jazz music on YouTube. While I'm unable to d"}
+[2026-03-24T13:43:47.278205] STATUS (orchestrator): orchestrator → idle
+    Data: {}
+[2026-03-24T13:45:34.088193] REQUEST (orchestrator): New chat request
+    Data: {'preview': 'OPEN YOUTUBE ON CHROME'}
+[2026-03-24T13:45:34.095521] STATUS (orchestrator): orchestrator → active
+    Data: {}
+[2026-03-24T13:45:34.101634] STATUS (vector_observer): vector_observer → active
+    Data: {}
+[2026-03-24T13:45:34.107659] INFO (vector_observer): Analyzing prompt for Domain, Rigidity, and Complexity
+    Data: {}
+[2026-03-24T13:45:50.578971] TOOL_RESULT (vector_observer): Analysis Complete
+    Data: {'domain': 'web', 'rigidity': 0.45, 'complexity': 1}
+[2026-03-24T13:45:51.099858] STATUS (vector_observer): vector_observer → idle
+    Data: {}
+[2026-03-24T13:45:51.108826] INFO (orchestrator): Executing passing with complexity 1
+    Data: {}
+[2026-03-24T13:45:51.116350] STATUS (orchestrator): orchestrator → active
+    Data: {}
+[2026-03-24T13:45:53.176408] STATUS (orchestrator): orchestrator → active
+    Data: {}
+[2026-03-24T13:45:53.186575] STATUS (hippocampus): hippocampus → active
+    Data: {}
+[2026-03-24T13:45:55.724341] STATUS (hippocampus): hippocampus → idle
+    Data: {}
+[2026-03-24T13:45:55.734816] INFO (orchestrator): Complexity 1: Executing single synchronous pass.
+    Data: {}
+[2026-03-24T13:46:13.955058] STATUS (orchestrator): orchestrator → idle
+    Data: {}
+[2026-03-24T13:46:13.964229] STATUS (synthesizer): synthesizer → idle
+    Data: {}
+[2026-03-24T13:46:13.971253] RESPONSE (synthesizer): Final response generated
+    Data: {'preview': "I currently don't have the ability to open applications or control the GUI directly. The tools avail"}
+[2026-03-24T13:46:13.984549] STATUS (orchestrator): orchestrator → idle
+    Data: {}
+[2026-03-24T13:47:45.300265] INFO (subconscious): Cognitive Insight: ```json
+{
+  "search_results": [
+    {
+      "title": "Hidden Costs and Compliance Pitfalls in High-Value E-commerce Logi...
+    Data: {'insight': '```json\n{\n  "search_results": [\n    {\n      "title": "Hidden Costs and Compliance Pitfalls in High-Value E-commerce Logistics",\n      "snippet": "Industry analysis reveals that while integrated solutions offer speed, they often create new vulnerabilities: inconsistent data sharing between logistics and customs platforms, variable de minimis regulations by country, and high insurance costs that are not always transparent to the shipper.",\n      "link": "https://www.joc.com/hidden-costs-high-value-logistics",\n      "date": "2024-01-22"\n    },\n    {\n      "title": "Case Stu
+[2026-03-24T13:54:32.885179] INFO (system): Manifold agent server starting...
+    Data: {}
+[2026-03-24T13:54:32.957686] INFO (system): Server ready on port 18790
+    Data: {}
+[2026-03-24T13:54:32.982153] INFO (subconscious): SubconsciousEngine started
+    Data: {}
+[2026-03-24T13:54:41.250991] INFO (system): Model changed to deepseek-chat
+    Data: {}
+[2026-03-24T13:55:02.601232] REQUEST (orchestrator): New chat request
+    Data: {'preview': 'OPEN YOUTUBE ON CHROME'}
+[2026-03-24T13:55:02.608852] STATUS (orchestrator): orchestrator → active
+    Data: {}
+[2026-03-24T13:55:02.618357] STATUS (vector_observer): vector_observer → active
+    Data: {}
+[2026-03-24T13:55:02.629179] INFO (vector_observer): Analyzing prompt for Domain, Rigidity, and Complexity
+    Data: {}
+[2026-03-24T13:55:09.675697] TOOL_RESULT (vector_observer): Analysis Complete
+    Data: {'domain': 'web', 'rigidity': 0.45, 'complexity': 1}
+[2026-03-24T13:55:10.187830] STATUS (vector_observer): vector_observer → idle
+    Data: {}
+[2026-03-24T13:55:10.195858] INFO (orchestrator): Executing passing with complexity 1
+    Data: {}
+[2026-03-24T13:55:10.204107] STATUS (orchestrator): orchestrator → active
+    Data: {}
+[2026-03-24T13:55:12.267364] STATUS (orchestrator): orchestrator → active
+    Data: {}
+[2026-03-24T13:55:12.278449] STATUS (hippocampus): hippocampus → active
+    Data: {}
+[2026-03-24T13:55:14.818731] STATUS (hippocampus): hippocampus → idle
+    Data: {}
+[2026-03-24T13:55:14.828371] INFO (orchestrator): Complexity 1: Executing single synchronous pass.
+    Data: {}
+[2026-03-24T13:55:27.999052] STATUS (orchestrator): orchestrator → idle
+    Data: {}
+[2026-03-24T13:55:28.007617] STATUS (synthesizer): synthesizer → idle
+    Data: {}
+[2026-03-24T13:55:28.015920] RESPONSE (synthesizer): Final response generated
+    Data: {'preview': "I understand you want to open YouTube in Chrome, but I currently don't have access to the system com"}
+[2026-03-24T13:55:28.027823] STATUS (orchestrator): orchestrator → idle
+    Data: {}
